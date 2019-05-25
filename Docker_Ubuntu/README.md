@@ -11,6 +11,8 @@ Take notes of Docker on Ubuntu stuffs
 
 [How To Install and Use Docker on Ubuntu 16.04 | DigitalOcean](#how-to-install-and-use-docker-on-ubuntu-1604--digitalocean)  
 
+[Reference](#reference)  
+
 # Docker for Ubuntu hosted on WSL of Windows 10 Home  
 [Windows 10 HomeでWSL越しにDocker for Ubuntu+Re:VIEWを使う（VM不要）updated at 2019-05-07](https://qiita.com/hoshimado/items/78cccdaffd41dc47837e#%E5%8B%95%E4%BD%9C%E6%A4%9C%E8%A8%BC%E3%81%97%E3%81%9F%E7%92%B0%E5%A2%8320190722)  
 
@@ -246,7 +248,8 @@ sudo docker run hello-world
 
 # Reference
 * [Windows10+WSL(Ubuntu)+Docker サーバサイド開発環境 updated at 2019-03-19](https://qiita.com/arai-h/items/70f592f1ba7075727f38)  
-
+[(参考) 各コンテナの起動とコンテナ間通信](https://qiita.com/arai-h/items/70f592f1ba7075727f38#%E5%8F%82%E8%80%83-%E5%90%84%E3%82%B3%E3%83%B3%E3%83%86%E3%83%8A%E3%81%AE%E8%B5%B7%E5%8B%95%E3%81%A8%E3%82%B3%E3%83%B3%E3%83%86%E3%83%8A%E9%96%93%E9%80%9A%E4%BF%A1)  
+[(参考) ホスト(Windows)ドライブをマウント](https://qiita.com/arai-h/items/70f592f1ba7075727f38#%E5%8F%82%E8%80%83-%E3%83%9B%E3%82%B9%E3%83%88windows%E3%83%89%E3%83%A9%E3%82%A4%E3%83%96%E3%82%92%E3%83%9E%E3%82%A6%E3%83%B3%E3%83%88)  
 
 * [Setting Up Docker for Windows and WSL to Work Flawlessly Apr 19, 2019](https://nickjanetakis.com/blog/setting-up-docker-for-windows-and-wsl-to-work-flawlessly)  
 
