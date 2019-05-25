@@ -3,16 +3,17 @@ Take notes of Docker on Ubuntu stuffs
 
 # Table of Contents  
 [Docker for Ubuntu hosted on WSL of Windows 10 Home](#docker-for-ubuntu-hosted-on-wsl-of-windows-10-home)  
+[Prerequisites (必要なもの)](#prerequisites-%E5%BF%85%E8%A6%81%E3%81%AA%E3%82%82%E3%81%AE)  
 [Docker Setup of Windows Subsystem for Linux](#docker-setup-of-windows-subsystem-for-linux)  
 [Solution: Cannot connect to the Docker daemon on bash on Ubuntu windows](#solution-cannot-connect-to-the-docker-daemon-on-bash-on-ubuntu-windows)
+[Select docker.io, not latest docker-ce] ()  
 
 [How To Install and Use Docker on Ubuntu 16.04 | DigitalOcean](#how-to-install-and-use-docker-on-ubuntu-1604--digitalocean)  
-[How do I install Docker on Ubuntu 16.04 LTS?] ()  
 
 # Docker for Ubuntu hosted on WSL of Windows 10 Home  
 [Windows 10 HomeでWSL越しにDocker for Ubuntu+Re:VIEWを使う（VM不要）updated at 2019-05-07](https://qiita.com/hoshimado/items/78cccdaffd41dc47837e#%E5%8B%95%E4%BD%9C%E6%A4%9C%E8%A8%BC%E3%81%97%E3%81%9F%E7%92%B0%E5%A2%8320190722)  
 
-## 必要なもの (Prerequisites)  
+## Prerequisites (必要なもの)  
 * 2018年4月以降のアップデートを適用したMicrosoft Windows 10環境。
   - Windows 10 Homeエディション（Hyper-V無し）の環境で動作確認しました。
   - Windows 10 April Update 2018（10.0.17134）以降の環境と対象とします。
@@ -61,37 +62,94 @@ docker run hello-world
 # docker ps
 Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?
 ```
-```
-Found the solution on this post: https://blog.jayway.com/2017/04/19/running-docker-on-bash-on-windows/
+>Found the solution on this post: https://blog.jayway.com/2017/04/19/running-docker-on-bash-on-windows/  
+>Running docker against an engine on a different machine is actually quite easy, as Docker can expose a TCP endpoint which the CLI can attach to.  
+> This TCP endpoint is turned off by default; to activate it, right-click the Docker icon in your taskbar and choose Settings, and tick the box next to “Expose daemon on tcp://localhost:2375 without TLS”.  
+> With that done, all we need to do is instruct the CLI under Bash to connect to the engine running under Windows instead of to the non-existing engine running under Bash, like this:  
 
-Running docker against an engine on a different machine is actually quite easy, as Docker can expose a TCP endpoint which the CLI can attach to.
-
-This TCP endpoint is turned off by default; to activate it, right-click the Docker icon in your taskbar and choose Settings, and tick the box next to “Expose daemon on tcp://localhost:2375 without TLS”.
-
-With that done, all we need to do is instruct the CLI under Bash to connect to the engine running under Windows instead of to the non-existing engine running under Bash, like this:
-```
 ![alt tag](https://images2018.cnblogs.com/blog/578477/201806/578477-20180604160519171-1306541136.png)
 
 ```
 $ docker -H tcp://localhost:2375 images
 ```
 
-```
-There are two ways to make this permanent – either add an alias for the above command or export an environment variable which instructs Docker where to find the host engine (NOTE: make sure to use single apostrophe's below):
-```
+> There are two ways to make this permanent – either add an alias for the above command or export an environment variable which instructs Docker where to find the host engine (NOTE: make sure to use single apostrophe's below):  
+
 ```
 $ echo "export DOCKER_HOST='tcp://localhost:2375'" >> ~/.bashrc
 $ source ~/.bashrc
 ```
 
-```
-Now, running docker commands from Bash works just like they’re supposed to.
-```
+>Now, running docker commands from Bash works just like they’re supposed to.  
+
 ```
 $ docker run hello-world
 ```
 ![alt tag](https://i.imgur.com/9wEPTGt.png)
 
+## Install and Excute Re:VIEW image for Docker  
+続いて、Re:VIEW image for Dockerの取得します。  
+以下のリポジトリで公開されているので、こちらを利用します。  
+https://github.com/vvakame/docker-review  
+```
+docker pull vvakame/review:3.0
+```
+
+```
+$ mkdir /mnt/d/repo-doc
+$ docker run -v /mnt/d/repo-doc:/work -it vvakame/review:3.0 /bin/sh
+# cd /work
+# review-init review-sample
+# cd review-sample
+# review-pdfmaker config.yml
+# exit
+$ exit
+```
+
+```
+docker run -v /mnt/d/repo-doc:/work -it vvakame/review:3.0 /bin/sh
+```
+
+1. 「Re:VIEW image for Docker」を起動する。
+2. Windows側のDドライブのルートの「repo-doc」フォルダを、docker側のルートの「work」フォルダとしてマウントする。
+3. Dockerのコマンドラインに入る。
+
+## 普段のReviewコンパイルについて  
+
+### 起動時にDockerデーモンを起動しておく  
+```
+sudo cgroupfs-mount && sudo service docker start
+```
+「Dockerデーモン」の起動方法は先ほどと同様です。起動したら、WSLの画面は閉じてしまって構いません。  
+1. Ubuntu on WSLを管理者権限で起動する。  
+2. Ubuntuのコマンドライン（ターミナル）上で、以下のコマンド実行する。  
+
+### 容易なReviewのコンパイル実行方法  
+実際のWindows上での利用方法としては、以下のようになると思います。
+
+1. 任意のエディタ（Visual Studio Codeとか）でReviewファイルを作成する。
+2. 作成したReviewファイルを、reviewコマンドでpdfへコンパイルする。
+
+一般的なreviewファイルは、以下の様なフォルダ構造で作成すると思います。
+```
+ドキュメントのフォルダ
+　＋articles
+　　＋実際のreview.reファイル
+    ＋config.yml
+    ＋catalog.yml
+```
+
+```
+docker run --rm -v `pwd`/articles:/work vvakame/review:3.0 /bin/sh -c "cd /work && review-pdfmaker config.yml"
+```
+上記のコマンドは、以下を纏めて実行しています。  
+
+1. dockerイメージを起動（生成）：run  
+2. カレントフォルダの直下にあるarticlesフォルダを、docker上のルートのworkフォルダとしてマウント：-v  
+3. docker起動後に、「workフォルダへ移動、reviewコンパイル」を実行：/bin/sh -c  
+4. dockerイメージを終了（破棄）：-rm  
+
+## Select docker.io, not latest docker-ce.  
 
 
 # How To Install and Use Docker on Ubuntu 16.04 | DigitalOcean
