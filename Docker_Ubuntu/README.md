@@ -85,7 +85,7 @@ $ source ~/.bashrc
 ```
 $ docker run hello-world
 ```
-![alt tag](https://i.imgur.com/9wEPTGt.png)
+![alt tag](https://i.imgur.com/9wEPTGt.png)  
 
 ## Install and Excute Re:VIEW image for Docker  
 続いて、Re:VIEW image for Dockerの取得します。  
@@ -94,6 +94,7 @@ https://github.com/vvakame/docker-review
 ```
 docker pull vvakame/review:3.0
 ```
+![alt tag](https://i.imgur.com/Okfh0dF.jpg)  
 
 ```
 $ mkdir /mnt/d/repo-doc
@@ -105,6 +106,7 @@ $ docker run -v /mnt/d/repo-doc:/work -it vvakame/review:3.0 /bin/sh
 # exit
 $ exit
 ```
+![alt tag]()  
 
 ```
 docker run -v /mnt/d/repo-doc:/work -it vvakame/review:3.0 /bin/sh
@@ -150,6 +152,22 @@ docker run --rm -v `pwd`/articles:/work vvakame/review:3.0 /bin/sh -c "cd /work 
 4. dockerイメージを終了（破棄）：-rm  
 
 ## Select docker.io, not latest docker-ce.  
+
+docker-cd が最新版(18.xx)で、docker.io は旧版（17.xx）らしい。
+https://stackoverflow.com/questions/45023363/what-is-docker-io-in-relation-to-docker-ce-and-docker-ee
+
+        What is docker.io in relation to docker-ce and docker-ee?
+
+    Older versions of Docker were called docker or docker-engine or docker.io
+
+ただし、現時点のWSL上では「docker-ceは動かない（docker.ioは動く）」とのこと。なので、現時点のWSLでは「docker.io」を入れる必要がある。
+https://www.reddit.com/r/bashonubuntuonwindows/comments/8cvr27/docker_is_running_natively_on_wsl/
+
+    when I install the docker-ce and run it, it gave me: docker: failed to register layer: Error processing tar file(exit status 1): invalid argument.
+
+https://github.com/Microsoft/WSL/issues/2291#issuecomment-383698720
+
+    The last docker-ce version that works right now on WSL is 17.09.0. Anything after that fails on extracting the docker images.
 
 
 # How To Install and Use Docker on Ubuntu 16.04 | DigitalOcean
