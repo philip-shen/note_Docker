@@ -153,14 +153,14 @@ docker run --rm -v `pwd`/articles:/work vvakame/review:3.0 /bin/sh -c "cd /work 
 
 ## Select docker.io, not latest docker-ce.  
 
-docker-cd が最新版(18.xx)で、docker.io は旧版（17.xx）らしい。
+docker-cd が最新版(18.xx)で、docker.io は旧版（17.xx）らしい。  
 https://stackoverflow.com/questions/45023363/what-is-docker-io-in-relation-to-docker-ce-and-docker-ee
 
     What is docker.io in relation to docker-ce and docker-ee?
 
   Older versions of Docker were called docker or docker-engine or docker.io
 
-ただし、現時点のWSL上では「docker-ceは動かない（docker.ioは動く）」とのこと。なので、現時点のWSLでは「docker.io」を入れる必要がある。
+ただし、現時点のWSL上では「docker-ceは動かない（docker.ioは動く）」とのこと。なので、現時点のWSLでは「docker.io」を入れる必要がある。 
 https://www.reddit.com/r/bashonubuntuonwindows/comments/8cvr27/docker_is_running_natively_on_wsl/
 
   when I install the docker-ce and run it, it gave me: docker: failed to register layer: Error processing tar file(exit status 1): invalid argument.
