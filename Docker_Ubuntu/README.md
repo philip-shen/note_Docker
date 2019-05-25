@@ -3,6 +3,7 @@ Take notes of Docker on Ubuntu stuffs
 
 # Table of Contents  
 [Docker for Ubuntu hosted on WSL of Windows 10 Home](#docker-for-ubuntu-hosted-on-wsl-of-windows-10-home)  
+[Docker Setup of Windows Subsystem for Linux](#docker-setup-of-windows-subsystem-for-linux)
 [Solution: Cannot connect to the Docker daemon on bash on Ubuntu windows](#solution-cannot-connect-to-the-docker-daemon-on-bash-on-ubuntu-windows)
 
 [How To Install and Use Docker on Ubuntu 16.04 | DigitalOcean](#how-to-install-and-use-docker-on-ubuntu-1604--digitalocean)  
@@ -30,7 +31,7 @@ Take notes of Docker on Ubuntu stuffs
 * 2 Docker のセットアップ
 * 3 Re:VIEW image for Dockerの取得
 
-## Windows Subsystem for Linux のセットアップ  
+## Docker Setup of Windows Subsystem for Linux
 ```
 sudo apt update
 sudo apt upgrade
