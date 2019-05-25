@@ -5,8 +5,8 @@ Take notes of Docker on Ubuntu stuffs
 [Docker for Ubuntu hosted on WSL of Windows 10 Home](#docker-for-ubuntu-hosted-on-wsl-of-windows-10-home)  
 [Prerequisites (必要なもの)](#prerequisites-%E5%BF%85%E8%A6%81%E3%81%AA%E3%82%82%E3%81%AE)  
 [Docker Setup of Windows Subsystem for Linux](#docker-setup-of-windows-subsystem-for-linux)  
-[Solution: Cannot connect to the Docker daemon on bash on Ubuntu windows](#solution-cannot-connect-to-the-docker-daemon-on-bash-on-ubuntu-windows)
-[Select docker.io, not latest docker-ce] ()  
+[Solution: Cannot connect to the Docker daemon on bash on Ubuntu windows](#solution-cannot-connect-to-the-docker-daemon-on-bash-on-ubuntu-windows)  
+[Select docker.io, not latest docker-ce](#select-dockerio-not-latest-docker-ce)  
 
 [How To Install and Use Docker on Ubuntu 16.04 | DigitalOcean](#how-to-install-and-use-docker-on-ubuntu-1604--digitalocean)  
 
@@ -106,7 +106,7 @@ $ docker run -v /mnt/d/repo-doc:/work -it vvakame/review:3.0 /bin/sh
 # exit
 $ exit
 ```
-![alt tag]()  
+![alt tag](https://i.imgur.com/iPLDgO3.jpg)  
 
 ```
 docker run -v /mnt/d/repo-doc:/work -it vvakame/review:3.0 /bin/sh
@@ -156,18 +156,18 @@ docker run --rm -v `pwd`/articles:/work vvakame/review:3.0 /bin/sh -c "cd /work 
 docker-cd が最新版(18.xx)で、docker.io は旧版（17.xx）らしい。
 https://stackoverflow.com/questions/45023363/what-is-docker-io-in-relation-to-docker-ce-and-docker-ee
 
-        What is docker.io in relation to docker-ce and docker-ee?
+    What is docker.io in relation to docker-ce and docker-ee?
 
-    Older versions of Docker were called docker or docker-engine or docker.io
+  Older versions of Docker were called docker or docker-engine or docker.io
 
 ただし、現時点のWSL上では「docker-ceは動かない（docker.ioは動く）」とのこと。なので、現時点のWSLでは「docker.io」を入れる必要がある。
 https://www.reddit.com/r/bashonubuntuonwindows/comments/8cvr27/docker_is_running_natively_on_wsl/
 
-    when I install the docker-ce and run it, it gave me: docker: failed to register layer: Error processing tar file(exit status 1): invalid argument.
+  when I install the docker-ce and run it, it gave me: docker: failed to register layer: Error processing tar file(exit status 1): invalid argument.
 
 https://github.com/Microsoft/WSL/issues/2291#issuecomment-383698720
 
-    The last docker-ce version that works right now on WSL is 17.09.0. Anything after that fails on extracting the docker images.
+  The last docker-ce version that works right now on WSL is 17.09.0. Anything after that fails on extracting the docker images.
 
 
 # How To Install and Use Docker on Ubuntu 16.04 | DigitalOcean
