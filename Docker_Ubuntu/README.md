@@ -3,7 +3,7 @@ Take notes of Docker on Ubuntu stuffs
 
 # Table of Contents  
 [Docker for Ubuntu hosted on WSL of Windows 10 Home](#docker-for-ubuntu-hosted-on-wsl-of-windows-10-home)  
-[Docker Setup of Windows Subsystem for Linux](#docker-setup-of-windows-subsystem-for-linux)
+[Docker Setup of Windows Subsystem for Linux](#docker-setup-of-windows-subsystem-for-linux)  
 [Solution: Cannot connect to the Docker daemon on bash on Ubuntu windows](#solution-cannot-connect-to-the-docker-daemon-on-bash-on-ubuntu-windows)
 
 [How To Install and Use Docker on Ubuntu 16.04 | DigitalOcean](#how-to-install-and-use-docker-on-ubuntu-1604--digitalocean)  
