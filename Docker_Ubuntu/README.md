@@ -7,6 +7,7 @@ Take notes of Docker on Ubuntu stuffs
 [Docker Setup of Windows Subsystem for Linux](#docker-setup-of-windows-subsystem-for-linux)  
 [Solution: Cannot connect to the Docker daemon on bash on Ubuntu windows](#solution-cannot-connect-to-the-docker-daemon-on-bash-on-ubuntu-windows)  
 [Select docker.io, not latest docker-ce](#select-dockerio-not-latest-docker-ce)  
+[Why Docker Desktop is necessary？](#why-docker-desktop-is-necessary)  
 
 [How To Install and Use Docker on Ubuntu 16.04 | DigitalOcean](#how-to-install-and-use-docker-on-ubuntu-1604--digitalocean)  
 
@@ -169,6 +170,16 @@ https://github.com/Microsoft/WSL/issues/2291#issuecomment-383698720
 
   The last docker-ce version that works right now on WSL is 17.09.0. Anything after that fails on extracting the docker images.
 
+## Why Docker Desktop is necessary？  
+[なぜDocker Desktopなのか？](https://qiita.com/arai-h/items/70f592f1ba7075727f38#%E3%81%AA%E3%81%9Cdocker-desktop%E3%81%AA%E3%81%AE%E3%81%8B)  
+
+WSL(Ubuntu)にDockerを入れても動作しません。  
+WSLが提供してないカーネルサービスを要求するためです。  
+WindowsでDockerを使うためにはDocker Desktopが必要です。  
+※2019年2月時点。WSL＋Ubuntu16.04＋Docker(17系)ならば動くようですが古いのでオススメしません。  
+
+Dockerのほか、NGINX Unitもmemfd_create()未対応で動作しません。  
+参考: [WSLのシステムコール実装/未実装を確認する](https://xdigit.hatenablog.com/entry/2018/11/21/164559)  
 
 # How To Install and Use Docker on Ubuntu 16.04 | DigitalOcean
 [How To Install and Use Docker on Ubuntu 16.04 Oct 19, 2018](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04)  
@@ -234,6 +245,9 @@ sudo docker run hello-world
 
 
 # Reference
+* [Windows10+WSL(Ubuntu)+Docker サーバサイド開発環境 updated at 2019-03-19](https://qiita.com/arai-h/items/70f592f1ba7075727f38)  
+
+
 * [Setting Up Docker for Windows and WSL to Work Flawlessly Apr 19, 2019](https://nickjanetakis.com/blog/setting-up-docker-for-windows-and-wsl-to-work-flawlessly)  
 
 * [Ubuntu 16.04 Mastodon Docker安裝教學 Mar 22, 2018](https://blog.sardo.work/ubuntu-16-04-mastdon-docker/)  
