@@ -2,9 +2,101 @@
 Take notes of Docker on Ubuntu stuffs
 
 # Table of Contents  
+[Docker for Ubuntu hosted on WSL of Windows 10 Home](#docker-for-ubuntu-hosted-on-wsl-of-windows-10-home)  
+[Solution: Cannot connect to the Docker daemon on bash on Ubuntu windows]()
+
+[How To Install and Use Docker on Ubuntu 16.04 | DigitalOcean](#how-to-install-and-use-docker-on-ubuntu-1604--digitalocean)  
+[How do I install Docker on Ubuntu 16.04 LTS?] ()  
+
+# Docker for Ubuntu hosted on WSL of Windows 10 Home  
+[Windows 10 HomeでWSL越しにDocker for Ubuntu+Re:VIEWを使う（VM不要）updated at 2019-05-07](https://qiita.com/hoshimado/items/78cccdaffd41dc47837e#%E5%8B%95%E4%BD%9C%E6%A4%9C%E8%A8%BC%E3%81%97%E3%81%9F%E7%92%B0%E5%A2%8320190722)  
+
+## 必要なもの (Prerequisites)  
+* 2018年4月以降のアップデートを適用したMicrosoft Windows 10環境。
+  - Windows 10 Homeエディション（Hyper-V無し）の環境で動作確認しました。
+  - Windows 10 April Update 2018（10.0.17134）以降の環境と対象とします。
+* ストレージ内に最低でも3.2GB以上の空き領域。
+  - Windows Subsystem for Linuxをインストールすると1.10GB使用します。
+  - Re:VIEW image for Dockerをインストールすると2.03GBを使用します(Re:VIEW 2.5)。
+  - このほかにドキュメント自体などを収納するための空き領域も必要です。  
+
+## 動作時の負荷について  
+* WSL利用時のメモリ利用量は0.1GB程度です。  
+
+## 完了まで全体像  
+> 以下の操作を行います。ネットワーク回線の速度に依存しますが、10～30Mbpsの下り速度の環境で「1.」を30分くらい、「2.」と「3.」を30分くらい、合計１ｈと少しで完了できます。
+
+* 1 Windows Subsystem for Linux (Ubuntu)のセットアップ
+* 2 Docker のセットアップ
+* 3 Re:VIEW image for Dockerの取得
+
+## Windows Subsystem for Linux のセットアップ  
+```
+sudo apt update
+sudo apt upgrade
+sudo apt install docker.io
+sudo cgroupfs-mount
+sudo usermod -aG docker $USER
+sudo service docker start
+```
+
+dockerがインストールされ、デーモン (daemon)が起動します。本設定は初回のみ実施し、2回目以降は必要ありません。2回目以降の動作に準拠するため、一旦「exit」でUbuntu on WSLを終了します。  
+
+2回目以降は、以下の操作でDockerデーモンを起動します。  
+1. Ubuntu on WSLを管理者権限で起動する。  
+2. Ubuntuのコマンドライン（ターミナル）上で、以下のコマンド実行する。  
+```
+sudo cgroupfs-mount && sudo service docker start
+```
+
+dockder が正しくセットアップされたの確認のため、Hello Worldのイメージを起動してみます。以降のdockerコマンドではsudoは不要です。  
+```
+docker run hello-world
+```
+
+## Solution: Cannot connect to the Docker daemon on bash on Ubuntu windows
+[Cannot connect to the Docker daemon on bash on Ubuntu windows](https://stackoverflow.com/questions/48047810/cannot-connect-to-the-docker-daemon-on-bash-on-ubuntu-windows)
+```
+# docker ps
+Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?
+```
+```
+Found the solution on this post: https://blog.jayway.com/2017/04/19/running-docker-on-bash-on-windows/
+
+Running docker against an engine on a different machine is actually quite easy, as Docker can expose a TCP endpoint which the CLI can attach to.
+
+This TCP endpoint is turned off by default; to activate it, right-click the Docker icon in your taskbar and choose Settings, and tick the box next to “Expose daemon on tcp://localhost:2375 without TLS”.
+
+With that done, all we need to do is instruct the CLI under Bash to connect to the engine running under Windows instead of to the non-existing engine running under Bash, like this:
+```
+![alt tag](https://images2018.cnblogs.com/blog/578477/201806/578477-20180604160519171-1306541136.png)
+
+```
+$ docker -H tcp://localhost:2375 images
+```
+
+```
+There are two ways to make this permanent – either add an alias for the above command or export an environment variable which instructs Docker where to find the host engine (NOTE: make sure to use single apostrophe's below):
+```
+```
+$ echo "export DOCKER_HOST='tcp://localhost:2375'" >> ~/.bashrc
+$ source ~/.bashrc
+```
+
+```
+Now, running docker commands from Bash works just like they’re supposed to.
+```
+```
+$ docker run hello-world
+```
+![alt tag](https://i.imgur.com/9wEPTGt.png)
+
+
 
 # How To Install and Use Docker on Ubuntu 16.04 | DigitalOcean
 [How To Install and Use Docker on Ubuntu 16.04 Oct 19, 2018](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04)  
+
+# How do I install Docker on Ubuntu 16.04 LTS? 
 [How do I install Docker on Ubuntu 16.04 LTS? Jul 22, 2017](https://askubuntu.com/questions/938700/how-do-i-install-docker-on-ubuntu-16-04-lts)  
 
 ## (A) Official Ubuntu Repositories  
@@ -65,6 +157,8 @@ sudo docker run hello-world
 
 
 # Reference
+* [Setting Up Docker for Windows and WSL to Work Flawlessly Apr 19, 2019](https://nickjanetakis.com/blog/setting-up-docker-for-windows-and-wsl-to-work-flawlessly)  
+
 * [Ubuntu 16.04 Mastodon Docker安裝教學 Mar 22, 2018](https://blog.sardo.work/ubuntu-16-04-mastdon-docker/)  
 * [Ubuntu Linux 安裝 Docker 步驟與使用教學 2016/11/17](https://blog.gtwang.org/virtualization/ubuntu-linux-install-docker-tutorial/)
 ```
