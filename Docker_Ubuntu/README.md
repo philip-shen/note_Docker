@@ -5,6 +5,8 @@ Take notes of Docker on Ubuntu stuffs
 [LinuxにDockerをインストールする](#linux%E3%81%ABdocker%E3%82%92%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%E3%81%99%E3%82%8B)  
 [How do I install Docker on Ubuntu 16.04 LTS?](#how-do-i-install-docker-on-ubuntu-1604-lts)  
 
+[Ubuntu Server 16.04でDockerを動かす]()  
+
 [Reference](#reference)  
 
 # LinuxにDockerをインストールする  
@@ -101,6 +103,78 @@ docker:x:994:yoshi
 再ログイン後にdocker runコマンドで動作確認を行います。"Hello from Docker!"が表示されていればOK  
 ```
 $ docker run hello-world
+```
+# Ubuntu Server 16.04でDockerを動かす  
+[Ubuntu Server 16.04でDockerを動かす 2016-07-16-sat](https://blog.onodai.com/posts/2016-07-16-sat)  
+## 前提  
+## リポジトリの追加  
+
+* 1 必要なパッケージをインストールする。
+```
+   $ sudo apt-get install apt-transport-https ca-certificates
+```
+
+* 2 GPG鍵を追加する。
+```
+    $ sudo apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:8 0 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
+```
+
+* 3 /etc/apt/sources.list.d/docker.listを新規作成、編集し、Dockerのオフィシャルリポジトリを追加する。
+```
+    $ sudo vi /etc/apt/sources.list.d/docker.list
+
+    [/etc/apt/sources.list.d/docker.list]
+
+    deb https://apt.dockerproject.org/repo ubuntu-xenial main
+```
+
+* 4 パッケージインデックスを更新する。
+```
+
+    $ sudo apt-get update
+```
+
+* 5  古いパッケージをアンインストールする。
+```
+    $ sudo apt-get purge lxc-docker
+```
+
+* 6  Dockerのパッケージを取得できるか確認する。
+```
+    $ apt-cache policy docker-engine
+```
+
+## Dockerのインストール  
+
+* 1 パッケージインデックスを更新する。
+```
+    $ sudo apt-get update
+```
+
+* 2 Dockerをインストールする。
+```
+    $ sudo apt-get install docker-engine
+```
+
+* 3 Dockerを起動する。
+```
+    $ sudo systemctl start docker.service
+```
+
+* 4 OS起動時に自動起動するようにする。
+```
+    $ sudo systemctl enable docker.service
+```
+
+## 動作確認  
+```
+$ sudo docker run hello-world
+```
+
+## おまけ:一般ユーザでもDockerのコマンドを扱えるように  
+このままではroot以外のユーザがDockerのコマンドを扱えないため、dockerグループに普段使っているユーザを追加する。  
+```
+$ sudo usermod -aG docker onodai
 ```
 
 # How do I install Docker on Ubuntu 16.04 LTS? 
