@@ -2,8 +2,8 @@
 Take notes of Docker on Ubuntu stuffs
 
 # Table of Contents  
-
-[]()  
+[LinuxにDockerをインストールする](#linux%E3%81%ABdocker%E3%82%92%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%E3%81%99%E3%82%8B)  
+[How do I install Docker on Ubuntu 16.04 LTS?]()  
 
 [Reference](#reference)  
 
@@ -103,8 +103,62 @@ docker:x:994:yoshi
 $ docker run hello-world
 ```
 
-##   
+# How do I install Docker on Ubuntu 16.04 LTS? 
+[How do I install Docker on Ubuntu 16.04 LTS? Jul 22, 2017](https://askubuntu.com/questions/938700/how-do-i-install-docker-on-ubuntu-16-04-lts)  
+
+## (A) Official Ubuntu Repositories  
+```
+$ sudo apt-get install docker.io
+```
+## (B) Official Docker Way  
+* (1) Set up the docker repository
+```
+sudo apt-get update
+sudo apt-get install apt-transport-https ca-certificates curl software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+```
+
+* (2) Install Docker CE
+```
+sudo apt-get update
+sudo apt-get install docker-ce
+```
+
+* (3) Verify the installation  
+```
+sudo docker run hello-world
+```
   
+[Ubuntu 16.04 安裝 Docker engine 2017-02-05](https://shazi.info/ubuntu-16-04-%E5%AE%89%E8%A3%9D-docker-engine/)  
+
+* Step.1 先 update 你的 package  
+> $ sudo apt-get update 
+
+* Step.2 加入 Docker 的官方 repository 金鑰  
+> $ sudo apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
+
+* Step.3 加入 Docker 官方 repository  
+> $ sudo apt-add-repository 'deb https://apt.dockerproject.org/repo ubuntu-xenial main'
+
+* Step.4 更新 repository  
+> $ sudo apt-get update  
+
+* Step.5 用 apt-cache 搜尋一下 docker-engine，確保你是從 Docker 官方 repository 安裝的，而不是 Ubuntu repository  
+> $ apt-cache policy docker-engine
+
+來源必須是 https://apt.dockerproject.org。
+
+* Step.6 安裝 Docker  
+> $ sudo apt-get install -y docker-engine
+
+* Step.7 Docker 會自動將服務啟動，並且寫入 boot  
+> $ sudo systemctl status docker
+
+* Step.8 由於這樣裝起來如果你要使用 docker command line 的話都必須使用 sudo 執行，如果不想要再用 sudo 的話可以將使用者加入 docker group  
+> $ sudo usermod -aG docker $(whoami)
+
+如果要馬上生效，請重新登入。 
 
 
 # 
