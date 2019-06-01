@@ -3,8 +3,9 @@ Take notes of Docker on Ubuntu stuffs
 
 # Table of Contents  
 [LinuxにDockerをインストールする](#linux%E3%81%ABdocker%E3%82%92%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%E3%81%99%E3%82%8B)  
-[How do I install Docker on Ubuntu 16.04 LTS?](#how-do-i-install-docker-on-ubuntu-1604-lts)  
 [Ubuntu Server 16.04でDockerを動かす](#ubuntu-server-1604%E3%81%A7docker%E3%82%92%E5%8B%95%E3%81%8B%E3%81%99)  
+[Ubuntu16.04にDocker CEをインストール]()
+[How do I install Docker on Ubuntu 16.04 LTS?](#how-do-i-install-docker-on-ubuntu-1604-lts)  
 
 [Reference](#reference)  
 
@@ -176,6 +177,129 @@ $ sudo docker run hello-world
 $ sudo usermod -aG docker onodai
 ```
 
+# Ubuntu16.04にDocker CEをインストール  
+[Ubuntu16.04にDocker CEをインストール updated at 2018-10-18](https://qiita.com/uutarou10/items/f9483aad5153957fc6dc)  
+
+```
+$ sudo apt-get install apt-transport-https ca-certificates curl software-properties-common
+```
+
+
+```
+$ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+```
+OKと表示されれば成功です。  
+
+keyのfingerprintは9DC8 5822 9FC7 DD38 854A E2D8 8D81 803C 0EBF CD88だそうで、以下のコマンドでfingerprintの下8文字を入力することで検証することができます。  
+```
+$ sudo apt-key fingerprint 0EBFCD88
+pub   4096R/0EBFCD88 2017-02-22
+      フィンガー・プリント = 9DC8 5822 9FC7 DD38 854A  E2D8 8D81 803C 0EBF CD88
+uid                  Docker Release (CE deb) <docker@docker.com>
+sub   4096R/F273FCD8 2017-02-22
+```
+
+```
+$ sudo add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) \
+   stable"
+```
+
+```
+$ sudo apt-get update
+```
+
+```
+$ sudo apt-get install docker-ce
+```
+
+```
+$ sudo docker run hello-world
+```
+## 注意  
+この説明で作るdockerグループはrootなユーザーと同等の権限を持っているのに等しいので、誰でもばかばかdockerグループに放り込むのはやめましょう。  
+
+## 手順  
+```
+$ sudo groupadd docker
+```
+でdockerグループを作成します、と書いてはいるんですが私の場合はすでに存在していたので、おそらくdocker本体を入れると自動で作成されるのだろうと思います。
+
+```
+$ sudo usermod -aG docker $USER
+```
+これで現在のユーザーがdockerグループに追加されます。他のユーザーを突っ込みたいときは$USERのところをユーザー名に。
+
+これが終わったら、一度ログアウトして入り直すことでsudoなしでdockerを使えるようになっているはずです。
+
+## troubleshooting  
+```
+$ sudo apt-get remove docker docker-engine docker.io
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+Package 'docker-engine' is not installed, so not removed
+Package 'docker' is not installed, so not removed
+Package 'docker.io' is not installed, so not removed
+You might want to run 'apt-get -f install' to correct these:
+The following packages have unmet dependencies:
+ linux-headers-gcp : Depends: linux-headers-4.15.0-1029-gcp but it is not going to be installed
+E: Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a solution).
+```
+
+```
+$ sudo apt-get install linux-headers-4.15.0-1029-gcp
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+The following packages were automatically installed and are no longer required:
+  linux-gcp-headers-4.15.0-1026 linux-headers-4.15.0-1026-gcp linux-image-4.15.0-1026-gcp linux-modules-4.15.0-1026-gcp
+Use 'sudo apt autoremove' to remove them.
+The following NEW packages will be installed:
+  linux-headers-4.15.0-1029-gcp
+0 upgraded, 1 newly installed, 0 to remove and 166 not upgraded.
+```
+
+```
+$ sudo apt-get remove docker docker-engine docker.io
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+Package 'docker-engine' is not installed, so not removed
+Package 'docker' is not installed, so not removed
+Package 'docker.io' is not installed, so not removed
+The following packages were automatically installed and are no longer required:
+  linux-gcp-headers-4.15.0-1026 linux-gcp-headers-4.15.0-1027 linux-headers-4.15.0-1026-gcp linux-headers-4.15.0-1027-gcp
+  linux-image-4.15.0-1026-gcp linux-image-4.15.0-1027-gcp linux-modules-4.15.0-1026-gcp linux-modules-4.15.0-1027-gcp
+Use 'sudo apt autoremove' to remove them.
+0 upgraded, 0 newly installed, 0 to remove and 166 not upgraded.
+```
+
+```
+$ sudo apt autoremove
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+The following packages will be REMOVED:
+  linux-gcp-headers-4.15.0-1026 linux-gcp-headers-4.15.0-1027 linux-headers-4.15.0-1026-gcp linux-headers-4.15.0-1027-gcp
+  linux-image-4.15.0-1026-gcp linux-image-4.15.0-1027-gcp linux-modules-4.15.0-1026-gcp linux-modules-4.15.0-1027-gcp
+0 upgraded, 0 newly installed, 8 to remove and 166 not upgraded.
+After this operation, 324 MB disk space will be freed.
+Do you want to continue? [Y/n] y
+```
+
+```
+$ sudo apt-get remove docker docker-engine docker.io
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+Package 'docker-engine' is not installed, so not removed
+Package 'docker' is not installed, so not removed
+Package 'docker.io' is not installed, so not removed
+0 upgraded, 0 newly installed, 0 to remove and 166 not upgraded.
+```
+
 # How do I install Docker on Ubuntu 16.04 LTS? 
 [How do I install Docker on Ubuntu 16.04 LTS? Jul 22, 2017](https://askubuntu.com/questions/938700/how-do-i-install-docker-on-ubuntu-16-04-lts)  
 
@@ -234,7 +358,7 @@ sudo docker run hello-world
 如果要馬上生效，請重新登入。 
 
 
-# 
+# Troubleshooting
 
 
 # Reference  
@@ -255,6 +379,8 @@ sudo usermod -aG docker gtwang
 ```
 首先，透過「uname -a」指令確認目前採用的 Linux 版本為 64 位元，接著執行「lsb_release -a」 可以看到為 Ubuntu 16.04.1 LTS 符合 Docker 容器環境運作要求。
 ```
+* [深層学習用のUbuntuサーバーのDocker初期設定メモ updated at 2018-10-28](https://qiita.com/miyamotok0105/items/f9f7aa912485b7a7388b)  
+
 * [Travis CI: E: Package 'docker-engine' has no installation candidate #873](https://github.com/ansible/molecule/issues/873)  
 
 
