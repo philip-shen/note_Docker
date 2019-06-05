@@ -22,6 +22,7 @@ CMD ["/usr/sbin/sshd", "-D"]
 ```
 * [Dockerize an SSH service | Docker Documentation](https://docs.docker.com/engine/examples/running_ssh_service/#build-an-eg_sshd-image)  
 
+* [【Python3】ブラウザを経由したスクレイピング(動的なページなど)【Selenium】2018-02-19](https://qiita.com/shunyooo/items/09cc636344212112a6fc)  
 
 * []()  
 ![alt tag]()
