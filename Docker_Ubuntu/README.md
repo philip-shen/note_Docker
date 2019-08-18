@@ -247,6 +247,117 @@ $ sudo usermod -aG docker $USER
 
 ## Troubleshooting  
 ```
+~$ sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+Traceback (most recent call last):
+  File "/usr/lib/command-not-found", line 27, in <module>
+    from CommandNotFound.util import crash_guard
+ModuleNotFoundError: No module named 'CommandNotFound'
+```
+```
+$ sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+Traceback (most recent call last):
+  File "/usr/lib/command-not-found", line 27, in <module>
+    from CommandNotFound.util import crash_guard
+ModuleNotFoundError: No module named 'CommandNotFound'
+test@ubuntu:~$ sudo nano /usr/lib/command-not-found
+test@ubuntu:~$ sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+The program 'lsb_release' is currently not installed. You can install it by typing:
+sudo apt install lsb-release
+
+```
+[ModuleNotFoundError: No module named 'CommandNotFound'](https://blog.csdn.net/jaket5219999/article/details/81083124)  
+```
+解决方案：
+
+找到lsb_release.py文件和CommandNotFound目录，把它们拷贝到报的错误中subprocess.py所在文件夹
+
+命令如下：
+
+    sudo find / -name 'lsb_release.py'
+    # result:
+    # /usr/share/pyshared/lsb_release.py
+    # /usr/lib/python2.7/dist-packages/lsb_release.py
+    # /usr/lib/python3/dist-packages/lsb_release.py
+    python -V
+    # Python 3.6.6
+    sudo cp  /usr/lib/python3/dist-packages/lsb_release.py /usr/local/lib/python3.6/ 
+```
+
+[python ModuleNotFoundError : 'CommandNotFound' Sep 3, 2017](https://askubuntu.com/questions/952302/python-modulenotfounderror-commandnotfound/952308)  
+```
+
+```
+
+
+[/usr/bin/add-apt-repository ModuleNotFoundError: No module named 'softwareproperties'](https://blog.csdn.net/yangguangqizhi/article/details/81276075)  
+```
+安装了 Anaconda 之后，进行 sudo add-apt-repository 报错：
+
+File "/usr/bin/add-apt-repository", line 11,
+
+ImportError: No module named softwareproperties.SoftwareProperties
+
+原因： 系统上同时存在多个版本的 python, /usr/bin/add-apt-repository 的第一行是：
+#! /usr/bin/python3
+/usr/bin/python3 链接到 python3.6
+
+解决方案：
+/usr/bin/add-apt-repository 的第一行改为：
+
+#! /usr/bin/python3.4
+Success !
+```
+
+
+[E: Problem executing scripts APT Update::Post-Invoke-Success error during apt-get update Aug 7, 2017](https://askubuntu.com/questions/943463/e-problem-executing-scripts-apt-updatepost-invoke-success-error-during-apt-ge)  
+```
+$ sudo apt-get update
+Get:1 http://security.ubuntu.com/ubuntu xenial-security InRelease [102 kB]     
+Hit:2 http://ve.archive.ubuntu.com/ubuntu xenial InRelease                     
+Hit:3 http://ve.archive.ubuntu.com/ubuntu xenial-updates InRelease             
+Hit:4 http://ve.archive.ubuntu.com/ubuntu xenial-backports InRelease           
+Fetched 102 kB in 23s (4337 B/s)                                               
+*** Error in `appstreamcli': double free or corruption (fasttop): 0x000000000210f4b0 ***
+======= Backtrace: =========
+```
+1. 
+```
+$ sudo apt install --reinstall libappstream3
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+The following packages will be upgraded:
+  libappstream3
+1 upgraded, 0 newly installed, 0 to remove and 490 not upgraded.
+Need to get 110 kB of archives.
+After this operation, 4,096 B of additional disk space will be used.
+Get:1 http://us.archive.ubuntu.com/ubuntu xenial-updates/main i386 libappstream3 i386 0.9.4-1ubuntu4 [110 kB]
+Fetched 110 kB in 1s (68.2 kB/s)
+(Reading database ... 178833 files and directories currently installed.)
+Preparing to unpack .../libappstream3_0.9.4-1ubuntu4_i386.deb ...
+Unpacking libappstream3:i386 (0.9.4-1ubuntu4) over (0.9.4-1) ...
+Processing triggers for libc-bin (2.23-0ubuntu10) ...
+Setting up libappstream3:i386 (0.9.4-1ubuntu4) ...
+Processing triggers for libc-bin (2.23-0ubuntu10) ...
+```
+2. (From here, https://forum.siduction.org/index.php?topic=6174.0):
+```
+sudo apt-get purge libappstream3
+```
+
+```
+$ sudo apt-get update
+Hit:1 http://us.archive.ubuntu.com/ubuntu xenial InRelease
+Hit:2 http://security.ubuntu.com/ubuntu xenial-security InRelease
+Hit:3 http://us.archive.ubuntu.com/ubuntu xenial-updates InRelease
+Hit:4 http://us.archive.ubuntu.com/ubuntu xenial-backports InRelease
+Hit:5 https://apt.dockerproject.org/repo ubuntu-xenial InRelease
+Hit:6 https://download.docker.com/linux/ubuntu xenial InRelease
+AppStream cache update completed, but some metadata was ignored due to errors.
+Reading package lists... Done
+```
+
+```
 $ sudo apt-get remove docker docker-engine docker.io
 Reading package lists... Done
 Building dependency tree
