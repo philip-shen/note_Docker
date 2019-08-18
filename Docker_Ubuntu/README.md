@@ -180,10 +180,17 @@ $ sudo usermod -aG docker onodai
 # Ubuntu16.04にDocker CEをインストール  
 [Ubuntu16.04にDocker CEをインストール updated at 2018-10-18](https://qiita.com/uutarou10/items/f9483aad5153957fc6dc)  
 
+## Prerequirement    
+古いDockerを消す  
+dockerまたはdocker-engineコマンドが存在する場合は  
+```
+$ sudo apt remove docker docker-engine docker.io
+```
+
+## Installation  
 ```
 $ sudo apt-get install apt-transport-https ca-certificates curl software-properties-common
 ```
-
 
 ```
 $ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
@@ -206,14 +213,14 @@ $ sudo add-apt-repository \
    stable"
 ```
 
+Dockerを入れる  
+
 ```
 $ sudo apt-get update
 ```
-
 ```
 $ sudo apt-get install docker-ce
 ```
-
 ```
 $ sudo docker run hello-world
 ```
