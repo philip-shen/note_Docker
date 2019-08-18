@@ -246,25 +246,6 @@ $ sudo usermod -aG docker $USER
 これが終わったら、一度ログアウトして入り直すことでsudoなしでdockerを使えるようになっているはずです。
 
 ## Troubleshooting  
-```
-~$ sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-Traceback (most recent call last):
-  File "/usr/lib/command-not-found", line 27, in <module>
-    from CommandNotFound.util import crash_guard
-ModuleNotFoundError: No module named 'CommandNotFound'
-```
-```
-$ sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-Traceback (most recent call last):
-  File "/usr/lib/command-not-found", line 27, in <module>
-    from CommandNotFound.util import crash_guard
-ModuleNotFoundError: No module named 'CommandNotFound'
-test@ubuntu:~$ sudo nano /usr/lib/command-not-found
-test@ubuntu:~$ sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-The program 'lsb_release' is currently not installed. You can install it by typing:
-sudo apt install lsb-release
-
-```
 [ModuleNotFoundError: No module named 'CommandNotFound'](https://blog.csdn.net/jaket5219999/article/details/81083124)  
 ```
 解决方案：
@@ -282,6 +263,33 @@ sudo apt install lsb-release
     # Python 3.6.6
     sudo cp  /usr/lib/python3/dist-packages/lsb_release.py /usr/local/lib/python3.6/ 
 ```
+
+```
+~$ sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+Traceback (most recent call last):
+  File "/usr/lib/command-not-found", line 27, in <module>
+    from CommandNotFound.util import crash_guard
+ModuleNotFoundError: No module named 'CommandNotFound'
+```
+```
+$ sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+Traceback (most recent call last):
+  File "/usr/lib/command-not-found", line 27, in <module>
+    from CommandNotFound.util import crash_guard
+ModuleNotFoundError: No module named 'CommandNotFound'
+test@ubuntu:~$ sudo nano /usr/lib/command-not-found (change to python3.5)
+
+test@ubuntu:~$ sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+The program 'lsb_release' is currently not installed. You can install it by typing:
+sudo apt install lsb-release
+```
+```
+$ sudo find / -name 'lsb_release.py'
+/usr/share/pyshared/lsb_release.py
+/usr/lib/python2.7/dist-packages/lsb_release.py
+/usr/lib/python3/dist-packages/lsb_release.py
+```
+
 
 [python ModuleNotFoundError : 'CommandNotFound' Sep 3, 2017](https://askubuntu.com/questions/952302/python-modulenotfounderror-commandnotfound/952308)  
 ```
