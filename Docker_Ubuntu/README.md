@@ -457,7 +457,7 @@ sudo apt-get install docker-ce
 ```
 sudo docker run hello-world
 ```
-  
+
 [Ubuntu 16.04 安裝 Docker engine 2017-02-05](https://shazi.info/ubuntu-16-04-%E5%AE%89%E8%A3%9D-docker-engine/)  
 
 * Step.1 先 update 你的 package  
@@ -488,6 +488,131 @@ sudo docker run hello-world
 
 如果要馬上生效，請重新登入。 
 
+# How to Install and Use Docker Compose on Ubuntu 16.04 /18.04  
+[How to Install and Use Docker Compose on Ubuntu 16.04 /18.04 Apr 9, 2019](https://www.osetc.com/en/how-to-install-and-use-docker-compose-on-ubuntu-16-04-18-04.html)  
+
+## Installing Docker Compose from Docker’s GitHub Repository  
+
+You can install the Docker Compose from the official Ubuntu repositories, but it is not the latest version. So you can install the latest version of Docker Compose from the Docker’s GitHub repository.
+```
+$ curl -L https://github.com/docker/compose/releases/download/1.24.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+$ chmod +x /usr/local/bin/docker-compose
+$ sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+```
+```
+$ docker-compose --version
+docker-compose version 1.24.0, build 0aa59064
+```
+
+# Dockerでpython3環境を準備する  
+[dockerで簡易にpython3の環境を作ってみる 2018-10-17](https://qiita.com/reflet/items/4b3f91661a54ec70a7dc)  
+```
+
+```
+## ファイル構成    
+```
+
+├ Dockerfile
+├ docker-compose.yml
+└ opt
+
+```
+## Dockerfile  
+```
+FROM python:3
+USER root
+
+RUN apt-get update
+RUN apt-get -y install locales && \
+    localedef -f UTF-8 -i ja_JP ja_JP.UTF-8
+ENV LANG ja_JP.UTF-8
+ENV LANGUAGE ja_JP:ja
+ENV LC_ALL ja_JP.UTF-8
+ENV TZ JST-9
+ENV TERM xterm
+
+RUN apt-get install -y vim less
+RUN pip install --upgrade pip
+RUN pip install --upgrade setuptools
+```
+## docker-compose.yml  
+```
+version: '3'
+services:
+  python3:
+    restart: always
+    build: .
+    container_name: 'python3'
+    working_dir: '/root/'
+    tty: true
+    volumes:
+      - ./opt:/root/opt
+```
+## コンテナ起動  
+```
+$ docker-compose up -d --build
+```
+## コンテナへ接続  
+```
+$ docker exec -it python3 bash
+```
+## 各種ライブラリをインストール (任意)  
+```
+$ python -m pip install numpy
+$ python -m pip install pandas
+$ python -m pip install matplotlib
+$ python -m pip install networkx
+$ python -m pip install pyyaml
+$ python -m pip install xlsxwriter
+$ python -m pip install tornado
+```
+## インストールしたライブラリの確認  
+```
+$ python -m pip list
+Package         Version
+--------------- -------
+cycler          0.10.0 
+decorator       4.3.0  
+kiwisolver      1.0.1  
+matplotlib      2.2.2  
+networkx        2.1    
+numpy           1.14.3 
+pandas          0.22.0 
+pip             10.0.1 
+pyparsing       2.2.0  
+python-dateutil 2.7.2  
+pytz            2018.4 
+PyYAML          3.12   
+setuptools      39.1.0 
+six             1.11.0 
+tornado         5.0.2  
+wheel           0.31.0 
+XlsxWriter      1.0.4  
+```
+## 要らなくなったら...  
+```
+$ docker-compose down
+```
+
+[Dockerでpython3環境を準備する updated at 2017-09-05](https://qiita.com/RyoMa_0923/items/7c0b22dd3f284472e18d)  
+## python3コンテナの準備  
+```
+sudo docker pull python:3.6
+```
+## python3コンテナの起動  
+```
+sudo docker run -d --name hoge python:3.6 /bin/bash -c 'tail -f /dev/null'
+```
+## 軽い動作確認
+今後いろいろやっていくのでpipなどを使えるかを確認。
+
+```
+sudo docker exec -it hoge /bin/bash
+# pip --version
+pip 9.0.1 from /usr/local/lib/python3.6/site-packages (python 3.6)
+```
+
+
 
 # Troubleshooting
 
@@ -495,6 +620,9 @@ sudo docker run hello-world
 # Reference  
 * [[Docker] ubuntu 14.04/16.04にDockerをインストール updated at 2017-06-23](https://qiita.com/koara-local/items/ee887bab8c7186d00a88)  
 * [Ubuntu 16.04 LTS Dockerをインストール posted at 2016-10-28](https://qiita.com/mtsu724/items/4c1e3a909a71fc4e5956)  
+* [dockerコンテナ上で利用しているLet's Encryptを自動更新する 2019-05-07](https://qiita.com/bachinyan/items/122430c081b9836cbc54)  
+* [Dockerの使い方メモ updated at 2018-07-15](https://qiita.com/__init__/items/1d04a3bdb43e982c6345)  
+
 
 * [Ubuntu 16.04 Mastodon Docker安裝教學 Mar 22, 2018](https://blog.sardo.work/ubuntu-16-04-mastdon-docker/)  
 * [Ubuntu Linux 安裝 Docker 步驟與使用教學 2016/11/17](https://blog.gtwang.org/virtualization/ubuntu-linux-install-docker-tutorial/)
