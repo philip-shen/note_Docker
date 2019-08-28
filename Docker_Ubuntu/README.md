@@ -762,7 +762,10 @@ pip 9.0.1 from /usr/local/lib/python3.6/site-packages (python 3.6)
 ```
 Run the Iperf Server Side Docker Container
 
-Start a listener service on port 5201 and name the container “iperf3-server” (if the image is not yet downloaded, the run command will pull it down for you). This is bound to the host machine/node IP address via NAT thanks to the -p 5201:5201 mapping. This means there is a container with a private IP address, along with the host machine’s IP listening on 5201. 
+Start a listener service on port 5201 and name the container “iperf3-server” 
+(if the image is not yet downloaded, the run command will pull it down for you). 
+This is bound to the host machine/node IP address via NAT thanks to the -p 5201:5201 mapping. 
+This means there is a container with a private IP address, along with the host machine’s IP listening on 5201. 
 ```
 
 ```
@@ -785,7 +788,11 @@ networkstatic/iperf3   latest              6ea158fee1a7        22 months ago    
 ```
  Run the Iperf Client Side Docker Container
 
-Since we started the server, we now want to a client from another host/node at the server to measure the bandwidth between the two endpoints. This can be the same host you are on it you are First, get the IP address of the new Iperf3 server container you just started. If you are testing in the real world against two seperate machines, you would point at the host’s IP that is reachable between the two endpoints
+Since we started the server, we now want to a client from another host/node at the server 
+to measure the bandwidth between the two endpoints. This can be the same host you are on it you are First, 
+get the IP address of the new Iperf3 server container you just started. 
+If you are testing in the real world against two seperate machines, 
+you would point at the host’s IP that is reachable between the two endpoints
 
 The following will run the client side command from the same host, the server container is running on:
 ```
