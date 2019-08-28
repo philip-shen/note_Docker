@@ -14,7 +14,7 @@ Take notes of Docker on Ubuntu stuffs
 [How do I install Docker on Ubuntu 16.04 LTS?](#how-do-i-install-docker-on-ubuntu-1604-lts)  
 
 [How to Install and Use Docker Compose on Ubuntu 16.04 /18.04](#how-to-install-and-use-docker-compose-on-ubuntu-1604-1804)  
-[Dockerでpython3環境を準備する](#docker%E3%81%A7python3%E7%92%B0%E5%A2%83%E3%82%92%E6%BA%96%E5%82%99%E3%81%99%E3%82%8B)  
+[Dockerでpython3 and iperf3環境を準備する](#docker%E3%81%A7python3-and-iperf3%E7%92%B0%E5%A2%83%E3%82%92%E6%BA%96%E5%82%99%E3%81%99%E3%82%8B)  
 
 [Reference](#reference)  
 
@@ -507,11 +507,10 @@ $ docker-compose --version
 docker-compose version 1.24.0, build 0aa59064
 ```
 
-# Dockerでpython3環境を準備する  
+# Dockerでpython3 and iperf3環境を準備する  
 [dockerで簡易にpython3の環境を作ってみる 2018-10-17](https://qiita.com/reflet/items/4b3f91661a54ec70a7dc)  
-```
+[Measuring Network Bandwidth using Iperf and Docker Jan 2, 2018](http://networkstatic.net/measuring-network-bandwidth-using-iperf-and-docker/)  
 
-```
 ## ファイル構成    
 ```
 
@@ -537,6 +536,29 @@ ENV TERM xterm
 RUN apt-get install -y vim less
 RUN pip install --upgrade pip
 RUN pip install --upgrade setuptools
+RUN pip install atomicwrites
+RUN pip install attrs
+RUN pip install certifi
+RUN pip install chardet
+RUN pip install idna
+RUN pip install importlib-metadata
+RUN pip install iperf3
+RUN pip install more-itertools
+RUN pip install packaging
+RUN pip install pluggy
+RUN pip install py
+RUN pip install pyparsing
+RUN pip install pytest
+RUN pip install requests
+RUN pip install six
+RUN pip install urllib3
+RUN pip install wcwidth
+RUN pip install zipp
+
+# install binary and remove cache
+RUN apt-get update \
+    && apt-get install -y iperf3 \
+    && rm -rf /var/lib/apt/lists/*
 ```
 ## docker-compose.yml  
 ```
@@ -549,16 +571,131 @@ services:
     working_dir: '/root/'
     tty: true
     volumes:
-      - ./opt:/root/opt
+      - /home/test/note_python/iperf:/root/opt
 ```
 ## コンテナ起動  
 ```
 $ docker-compose up -d --build
 ```
+
+```
+~/docker_python3$ docker build -t python3 -f Dockerfile_python3 .
+```
+```
+Sending build context to Docker daemon   7.68kB
+Step 1/31 : FROM python:3
+ ---> 60e318e4984a
+Step 2/31 : USER root
+ ---> Running in b58c8f06cd7b
+Removing intermediate container b58c8f06cd7b
+ ---> 9b13bea264fd
+Step 3/31 : RUN apt-get update
+ ---> Running in ad586c6ee542
+```
+.
+.
+.
+```
+Step 31/31 : RUN apt-get update     && apt-get install -y iperf3     && rm -rf /var/lib/apt/lists/*
+ ---> Running in 5fb18f6afc2f
+ヒット:1 http://security.debian.org/debian-security buster/updates InRelease
+ヒット:2 http://deb.debian.org/debian buster InRelease
+ヒット:3 http://deb.debian.org/debian buster-updates InRelease
+パッケージリストを読み込んでいます...
+パッケージリストを読み込んでいます...
+依存関係ツリーを作成しています...
+状態情報を読み取っています...
+以下の追加パッケージがインストールされます:
+  libiperf0 libsctp1
+提案パッケージ:
+  lksctp-tools
+以下のパッケージが新たにインストールされます:
+  iperf3 libiperf0 libsctp1
+アップグレード: 0 個、新規インストール: 3 個、削除: 0 個、保留: 1 個。
+131 kB のアーカイブを取得する必要があります。
+この操作後に追加で 328 kB のディスク容量が消費されます。
+取得:1 http://deb.debian.org/debian buster/main amd64 libsctp1 amd64 1.0.18+dfsg-1 [28.3 kB]
+取得:2 http://deb.debian.org/debian buster/main amd64 libiperf0 amd64 3.6-2 [77.3 kB]
+取得:3 http://deb.debian.org/debian buster/main amd64 iperf3 amd64 3.6-2 [25.9 kB]
+debconf: delaying package configuration, since apt-utils is not installed
+131 kB を 1秒 で取得しました (169 kB/s)
+以前に未選択のパッケージ libsctp1:amd64 を選択しています。
+(データベースを読み込んでいます ... 現在 27102 個のファイルとディレクトリがインストールされています。)
+.../libsctp1_1.0.18+dfsg-1_amd64.deb を展開する準備をしています ...
+libsctp1:amd64 (1.0.18+dfsg-1) を展開しています...
+以前に未選択のパッケージ libiperf0:amd64 を選択しています。
+.../libiperf0_3.6-2_amd64.deb を展開する準備をしています ...
+libiperf0:amd64 (3.6-2) を展開しています...
+以前に未選択のパッケージ iperf3 を選択しています。
+.../iperf3_3.6-2_amd64.deb を展開する準備をしています ...
+iperf3 (3.6-2) を展開しています...
+libsctp1:amd64 (1.0.18+dfsg-1) を設定しています ...
+libiperf0:amd64 (3.6-2) を設定しています ...
+iperf3 (3.6-2) を設定しています ...
+libc-bin (2.28-10) のトリガを処理しています ...
+Removing intermediate container 5fb18f6afc2f
+ ---> 6a3ed23d7e87
+Successfully built 6a3ed23d7e87
+Successfully tagged python3:latest
+```
+
 ## コンテナへ接続  
 ```
-$ docker exec -it python3 bash
+~/docker_python3$ docker-compose up -d
+Creating python3 ... done
 ```
+
+```
+~/docker_python3$ docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+python3             latest              9f129d917be2        3 minutes ago       1.01GB
+python              3                   60e318e4984a        30 hours ago        918MB
+hello-world         latest              fce289e99eb9        7 months ago        1.84kB
+```
+
+```
+~/docker_python3$ docker run -v /home/test/note_python/iperf:/root/opt -it python3 bash
+root@d264c66e2d7d:/# ls /root/opt/
+README.md  lib  logs  main  test
+root@d264c66e2d7d:/# python -V
+Python 3.7.4
+```
+
+```
+root@d264c66e2d7d:/# pip list -l
+Package            Version
+------------------ ---------
+atomicwrites       1.3.0
+attrs              19.1.0
+certifi            2019.6.16
+chardet            3.0.4
+idna               2.8
+importlib-metadata 0.19
+iperf3             0.1.11
+more-itertools     7.2.0
+packaging          19.1
+pip                19.2.3
+pluggy             0.12.0
+py                 1.8.0
+pyparsing          2.4.2
+pytest             5.1.1
+requests           2.22.0
+setuptools         41.2.0
+six                1.12.0
+urllib3            1.25.3
+wcwidth            0.1.7
+wheel              0.33.6
+zipp               0.6.0
+```
+
+```
+root@d264c66e2d7d:/# iperf3 -v
+iperf 3.6 (cJSON 1.5.2)
+Linux 945da946fa6c 4.15.0-58-generic #64~16.04.1-Ubuntu SMP Wed Aug 7 14:10:35 UTC 2019 x86_64
+Optional features available: CPU affinity setting, IPv6 flow label, SCTP, TCP congestion algorithm setting, sendfile / zerocopy, socket pacing, authentication
+```
+
+
 ## 各種ライブラリをインストール (任意)  
 ```
 $ python -m pip install numpy
@@ -621,6 +758,72 @@ pip 9.0.1 from /usr/local/lib/python3.6/site-packages (python 3.6)
 
 
 # Reference  
+* [Measuring Network Bandwidth using Iperf and Docker Jan 2, 2018](http://networkstatic.net/measuring-network-bandwidth-using-iperf-and-docker/)  
+```
+Run the Iperf Server Side Docker Container
+
+Start a listener service on port 5201 and name the container “iperf3-server” (if the image is not yet downloaded, the run command will pull it down for you). This is bound to the host machine/node IP address via NAT thanks to the -p 5201:5201 mapping. This means there is a container with a private IP address, along with the host machine’s IP listening on 5201. 
+```
+
+```
+$  docker run  -it --rm --name=iperf3-server -p 5201:5201 networkstatic/iperf3 -s
+-----------------------------------------------------------
+Server listening on 5201
+-----------------------------------------------------------
+```
+```
+$ docker ps
+CONTAINER ID        IMAGE                  COMMAND             CREATED             STATUS              PORTS                    NAMES
+43c6f69371ce        networkstatic/iperf3   "iperf3 -s"         2 minutes ago       Up 2 minutes        0.0.0.0:5201->5201/tcp   iperf3-server
+```
+```
+$ docker image ls
+REPOSITORY             TAG                 IMAGE ID            CREATED             SIZE
+networkstatic/iperf3   latest              6ea158fee1a7        22 months ago       126MB
+```
+
+```
+ Run the Iperf Client Side Docker Container
+
+Since we started the server, we now want to a client from another host/node at the server to measure the bandwidth between the two endpoints. This can be the same host you are on it you are First, get the IP address of the new Iperf3 server container you just started. If you are testing in the real world against two seperate machines, you would point at the host’s IP that is reachable between the two endpoints
+
+The following will run the client side command from the same host, the server container is running on:
+```
+
+```
+docker inspect --format "{{ .NetworkSettings.IPAddress }}" iperf3-server
+ 
+(Returned) 172.17.0.163
+```
+
+```
+docker run  -it --rm networkstatic/iperf3 -c 172.17.0.163
+```
+
+```
+Connecting to host 172.17.0.163, port 5201
+[  4] local 172.17.0.191 port 51148 connected to 172.17.0.163 port 5201
+[ ID] Interval           Transfer     Bandwidth       Retr  Cwnd
+[  4]   0.00-1.00   sec  4.16 GBytes  35.7 Gbits/sec    0    468 KBytes
+[  4]   1.00-2.00   sec  4.10 GBytes  35.2 Gbits/sec    0    632 KBytes
+[  4]   2.00-3.00   sec  4.28 GBytes  36.8 Gbits/sec    0   1.02 MBytes
+[  4]   3.00-4.00   sec  4.25 GBytes  36.5 Gbits/sec    0   1.28 MBytes
+[  4]   4.00-5.00   sec  4.20 GBytes  36.0 Gbits/sec    0   1.37 MBytes
+[  4]   5.00-6.00   sec  4.23 GBytes  36.3 Gbits/sec    0   1.40 MBytes
+[  4]   6.00-7.00   sec  4.17 GBytes  35.8 Gbits/sec    0   1.40 MBytes
+[  4]   7.00-8.00   sec  4.14 GBytes  35.6 Gbits/sec    0   1.40 MBytes
+[  4]   8.00-9.00   sec  4.29 GBytes  36.8 Gbits/sec    0   1.64 MBytes
+[  4]   9.00-10.00  sec  4.15 GBytes  35.7 Gbits/sec    0   1.68 MBytes
+- - - - - - - - - - - - - - - - - - - - - - - - -
+[ ID] Interval           Transfer     Bandwidth       Retr
+[  4]   0.00-10.00  sec  42.0 GBytes  36.1 Gbits/sec    0             sender
+[  4]   0.00-10.00  sec  42.0 GBytes  36.0 Gbits/sec                  receiver
+ 
+iperf Done.
+```
+
+* [Run container on specific IP with docker python API Apr 26, 2018](https://stackoverflow.com/questions/50028131/run-container-on-specific-ip-with-docker-python-api)  
+
 * [[Docker] ubuntu 14.04/16.04にDockerをインストール updated at 2017-06-23](https://qiita.com/koara-local/items/ee887bab8c7186d00a88)  
 * [Ubuntu 16.04 LTS Dockerをインストール posted at 2016-10-28](https://qiita.com/mtsu724/items/4c1e3a909a71fc4e5956)  
 * [dockerコンテナ上で利用しているLet's Encryptを自動更新する 2019-05-07](https://qiita.com/bachinyan/items/122430c081b9836cbc54)  
