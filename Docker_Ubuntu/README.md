@@ -723,6 +723,27 @@ XlsxWriter      1.0.4
 $ docker-compose down
 ```
 
+## iperf3 Server and Client  
+```
+$  docker run  -it --rm --name=iperf3-server -p 5201:5201 iperf3 -s
+-----------------------------------------------------------
+Server listening on 5201
+-----------------------------------------------------------
+```
+
+![alt tag](https://i.imgur.com/sNbT2mJ.jpg)  
+
+```
+docker inspect --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' iperf3-server
+ 
+(Returned) 172.17.0.3
+```
+
+```
+docker run  -it --rm networkstatic/iperf3 -c 172.17.0.3
+```
+![alt tag](https://i.imgur.com/xd4lL8g.jpg)  
+
 [Dockerでpython3環境を準備する updated at 2017-09-05](https://qiita.com/RyoMa_0923/items/7c0b22dd3f284472e18d)  
 ## python3コンテナの準備  
 ```
@@ -786,16 +807,6 @@ you would point at the host’s IP that is reachable between the two endpoints
 The following will run the client side command from the same host, the server container is running on:
 ```
 
-```
-docker inspect --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' iperf3-server
- 
-(Returned) 172.17.0.3
-```
-
-```
-docker run  -it --rm networkstatic/iperf3 -c 172.17.0.3
-```
-![alt tag](https://i.imgur.com/xd4lL8g.jpg)
 
 * [How to get a Docker container's IP address from the host? ](https://stackoverflow.com/questions/17157721/how-to-get-a-docker-containers-ip-address-from-the-host/17158003#17158003)  
 ```
