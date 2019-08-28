@@ -1,0 +1,38 @@
+FROM python:3
+USER root
+
+RUN apt-get update
+RUN apt-get -y install locales && \
+    localedef -f UTF-8 -i ja_JP ja_JP.UTF-8
+ENV LANG ja_JP.UTF-8
+ENV LANGUAGE ja_JP:ja
+ENV LC_ALL ja_JP.UTF-8
+ENV TZ JST-9
+ENV TERM xterm
+    
+RUN apt-get install -y vim less
+RUN pip install --upgrade pip
+RUN pip install --upgrade setuptools
+RUN pip install atomicwrites
+RUN pip install attrs
+RUN pip install certifi
+RUN pip install chardet
+RUN pip install idna
+RUN pip install importlib-metadata
+RUN pip install iperf3
+RUN pip install more-itertools
+RUN pip install packaging
+RUN pip install pluggy
+RUN pip install py
+RUN pip install pyparsing
+RUN pip install pytest
+RUN pip install requests
+RUN pip install six
+RUN pip install urllib3
+RUN pip install wcwidth
+RUN pip install zipp
+
+# install binary and remove cache
+RUN apt-get update \
+    && apt-get install -y iperf3 \
+    && rm -rf /var/lib/apt/lists/*
