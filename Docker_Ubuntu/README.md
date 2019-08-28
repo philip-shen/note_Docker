@@ -695,17 +695,6 @@ Linux 945da946fa6c 4.15.0-58-generic #64~16.04.1-Ubuntu SMP Wed Aug 7 14:10:35 U
 Optional features available: CPU affinity setting, IPv6 flow label, SCTP, TCP congestion algorithm setting, sendfile / zerocopy, socket pacing, authentication
 ```
 
-
-## 各種ライブラリをインストール (任意)  
-```
-$ python -m pip install numpy
-$ python -m pip install pandas
-$ python -m pip install matplotlib
-$ python -m pip install networkx
-$ python -m pip install pyyaml
-$ python -m pip install xlsxwriter
-$ python -m pip install tornado
-```
 ## インストールしたライブラリの確認  
 ```
 $ python -m pip list
