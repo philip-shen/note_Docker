@@ -149,6 +149,10 @@ Underlays
 Underlay network drivers expose host interfaces (i.e., the physical network interface at eth0) directly to containers or VMs running on the host. Two such underlay drivers are media access control virtual local area network (MACvlan) and internet protocol VLAN (IPvlan). The operation of and the behavior of MACvlan and IPvlan drivers are very familiar to network engineers. Both network drivers are conceptually simpler than bridge networking, remove the need for port-mapping and are more efficient. Moreover, IPvlan has an L3 mode that resonates well with many network engineers. Given the restrictions — or lack of capabilities — in most public clouds, underlays are particularly useful when you have on-premises workloads, security concerns, traffic priorities or compliance to deal with, making them ideal for brownfield use. Instead of needing one bridge per VLAN, underlay networking allows for one VLAN per subinterface.
 ```
 
+* [外部ネットワーク側からDockerコンテナに通信できる環境を作成する 2018-10-15](https://qiita.com/ttsubo/items/40162f5001a8c95040d9#1-ubuntuos%E3%81%AE%E3%83%90%E3%83%BC%E3%82%B8%E3%83%A7%E3%83%B3%E7%A2%BA%E8%AA%8D)  
+![alt tag](https://camo.qiitausercontent.com/fba1a183c846ab0339656fe6eb60f5e1cc7b3ee0/68747470733a2f2f71696974612d696d6167652d73746f72652e73332e616d617a6f6e6177732e636f6d2f302f3130333539352f30633863633233312d353261322d636364642d353662382d3037643665393464343631332e706e67)
+
+
 * [jpetazzo/pipework](https://github.com/jpetazzo/pipework)  
 ```
 Software-Defined Networking tools for LXC (LinuX Containers) 
