@@ -1,6 +1,12 @@
 # note_Docker
 Take notes of Docker stuffs
 
+# Table of Contents  
+[Docker network](#docker-network)  
+[Container's IP Subnet is the same as Host PC]()  
+
+[Reference](#reference)  
+
 # Docker network  
 * docker network create
 * docker network connect
@@ -9,17 +15,37 @@ Take notes of Docker stuffs
 * docker network disconnect
 * docker network inspect
 
-# Reference
-* [DockerとIPv6 2016-02-10](https://qiita.com/_norin_/items/7b9eac9fc31a8b02073f#%E5%85%AC%E5%BC%8F%E3%83%89%E3%82%AD%E3%83%A5%E3%83%A1%E3%83%B3%E3%83%88)  
-* [[翻訳] Work with network commands 2015-11-05](https://qiita.com/muddydixon/items/e69279d332f77fc00c3e)  
-
+# Container's IP Subnet is the same as Host PC 
 * [ホストPCと同じセグメントのIPアドレスをDockerコンテナに割り当てる 2019-05-15](https://qiita.com/Meganezaru@github/items/69f406844532d731d370)  
 ```
-macvlanドライバを利用するNetworkを作成して、docker run時に利用することで、ホストPCと同セグメントのIPアドレスを割り当てて、コンテナを動作させることができます。
+macvlanドライバを利用するNetworkを作成して、docker run時に利用することで、ホストPCと同セグメントのIPアドレスを割り当てて、
+コンテナを動作させることができます。
 
 Ubuntu 18.04で動作を確認
 ```
+* Networkの作成  
+```
+$ docker network create -d macvlan --subnet=192.168.1.0/24　--gateway=192.168.1.254 -o parent=enp4s0 mynet
+```
+```
+上記の例では、mynetという名称でアダプタが作成されます。
+--subnet、--gatewayには、ホストと同じネットワークの値を指定。
+-o parentには、ホストのアダプタID(ifconfig参照)を指定します。
+```
+```
+$ ifconfig
+docker0: flags=4099<UP,BROADCAST,MULTICAST>  mtu 1500
+
+enp4s0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 192.168.1.10  netmask 255.255.255.0  broadcast 192.168.1.255
+```
+* コンテナ起動  
+```
+$ docker run -d --name nginx20 --network mynet --ip 192.168.1.20 -p 80:80 nginx
+```
+
 * [Networking using a macvlan network](https://docs.docker.com/network/network-tutorial-macvlan/)  
+
 
 * [docker でMACVLANを使い、ホストと同じIP空間のIPを割り当てる 2016-12-07](https://qiita.com/manabuishiirb/items/a3f32215e1f42535fa8d)  
 ```
@@ -30,6 +56,10 @@ docker network create -d macvlan \
   --gateway=192.168.1.1 \
   -o parent=eth0 mcv
 ```
+
+# Reference
+* [DockerとIPv6 2016-02-10](https://qiita.com/_norin_/items/7b9eac9fc31a8b02073f#%E5%85%AC%E5%BC%8F%E3%83%89%E3%82%AD%E3%83%A5%E3%83%A1%E3%83%B3%E3%83%88)  
+* [[翻訳] Work with network commands 2015-11-05](https://qiita.com/muddydixon/items/e69279d332f77fc00c3e)  
 
 * [Docker 1.10 container's IP in LAN Jun 2 '16](https://stackoverflow.com/questions/35742807/docker-1-10-containers-ip-in-lan/36470828#36470828)  
 ```
