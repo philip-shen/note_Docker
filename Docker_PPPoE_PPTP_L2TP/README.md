@@ -6,7 +6,9 @@ Take notes of Docker stuffs
 [Docker L2TP](#docker-l2tp)  
 [PPTP vs L2TP vs OpenVPN ™ vs Chameleon ™ | VyprVPN](#pptp-vs-l2tp-vs-openvpn--vs-chameleon---vyprvpn)  
 
-# Docker PPPoE  
+# accel-ppp-docker
+[Fluke667/accel-ppp-docker](https://github.com/Fluke667/accel-ppp-docker)    
+
 
 # Docker PPTP  
 * [mobtitude/docker-vpn-pptp Latest commit on 9 Nov 2018](https://github.com/mobtitude/docker-vpn-pptp)  
