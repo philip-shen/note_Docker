@@ -234,6 +234,65 @@ pigo ALL=(root) NOPASSWD: /home/pigo/.local/bin/start_services.sh
 最後，Windows 內建排程器設定使用者登入就執行，如下圖是工作排程器打開的畫面。
 ```
 
+[WSL2 + VScodeでWindowsから一瞬でDockerコンテナ内に引き篭もれる開発環境を整えたかった Aug 25, 2019](https://qiita.com/iridon0920/items/005a9224343413b74f78)  
+[Docker Desktop for WSL2 を使い快適にWindowsでサーバ開発をしよう！ Oct 23, 2019](https://qiita.com/YukiMiyatake/items/c7896a0fc5abfa6c2300)  
+[Windows 10 HomeのWSL2でdocker-composeを使う Dec 09, 2019](https://qiita.com/sonoha/items/33f1bc3b12f0803ceca7)  
+
+[WSL2でdocker-composeを使えるようにするまで Aug 25, 2019](https://qiita.com/suaaa7/items/744f58319c04d9b6bfbe)  
+## 6. dockerのインストール  
+[6. dockerのインストール](https://qiita.com/suaaa7/items/744f58319c04d9b6bfbe#6-docker%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB)  
+```
+$ sudo apt-get update
+$ sudo apt-get install \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg-agent \
+    software-properties-common
+$ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+$ sudo add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) \
+   stable"
+$ sudo apt-get install docker-ce
+```
+
+起動  
+```
+$ service docker status
+ * Docker is not running
+$ sudo service docker start
+ * Starting Docker: docker                                                                                       [ OK ]
+$ service docker status
+ * Docker is running
+```
+
+pullできるか確認  
+```
+$ docker pull alpine:latest
+latest: Pulling from library/alpine
+9d48c3bd43c5: Pull complete                                                                                             Digest: sha256:72c42ed48c3a2db31b7dafe17d275b634664a708d901ec9fd57b1529280f01fb
+Status: Downloaded newer image for alpine:latest
+docker.io/library/alpine:latest
+$ docker images
+REPOSITORY                                                       TAG                 IMAGE ID            CREATED             SIZE
+alpine                                                           latest              961769676411 
+```
+
+## 7. docker-composeのインストール  
+[7. docker-composeのインストール](https://qiita.com/suaaa7/items/744f58319c04d9b6bfbe#7-docker-compose%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB)  
+```
+$ sudo curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+$ sudo chmod +x /usr/local/bin/docker-compose
+$ sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+$ docker-compose --version
+docker-compose version 1.24.1, build 4667896b
+```
+
+```
+
+```
+
 
 # Reference
 * [Windows10+WSL(Ubuntu)+Docker サーバサイド開発環境 updated at 2019-03-19](https://qiita.com/arai-h/items/70f592f1ba7075727f38)  
