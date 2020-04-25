@@ -12,7 +12,7 @@ Take notes of Docker on Ubuntu stuffs
 [How To Install and Use Docker on Ubuntu 16.04 | DigitalOcean](#how-to-install-and-use-docker-on-ubuntu-1604--digitalocean)  
 
 [Docker on WSL2](#docker-on-wsl2)  
-[1. docker Installation](#1-docker-installation)
+[1. docker Installation](#1-docker-installation)  
 [2. docker-compose Installation](#2-docker-compose-installation)  
 [3. Portainer Installation](#3-portainer-installation)  
 [4. Launch Docker when Windows Login](#4-launch-docker-when-windows-login)  
