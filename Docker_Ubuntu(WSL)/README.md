@@ -11,7 +11,12 @@ Take notes of Docker on Ubuntu stuffs
 
 [How To Install and Use Docker on Ubuntu 16.04 | DigitalOcean](#how-to-install-and-use-docker-on-ubuntu-1604--digitalocean)  
 
+[Docker on WSL2](#docker-on-wsl2)  
+[Portainer Installation](#portainer-installation)  
+[Launch Docker when Windows Login](#launch-docker-when-windows-login)  
+
 [Reference](#reference)  
+
 
 # Docker for Ubuntu hosted on WSL of Windows 10 Home  
 [Windows 10 HomeでWSL越しにDocker for Ubuntu+Re:VIEWを使う（VM不要）updated at 2019-05-07](https://qiita.com/hoshimado/items/78cccdaffd41dc47837e#%E5%8B%95%E4%BD%9C%E6%A4%9C%E8%A8%BC%E3%81%97%E3%81%9F%E7%92%B0%E5%A2%8320190722)  
@@ -187,8 +192,45 @@ Dockerのほか、NGINX Unitもmemfd_create()未対応で動作しません。
 [How To Install and Use Docker on Ubuntu 16.04 Oct 19, 2018](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04)  
 
 
+# Docker on WSL2  
+[最近開始改用 WSL2 跑 docker 當開發環境 Oct 08, 2019](https://www.pigo.idv.tw/archives/3359)  
+## Portainer Installation  
+```
+Portainer 是一套很棒的 docker 管理介面，
+我也是照著官方的說明文件來安裝的，但我們這邊要依照 Linux 的方式來安裝，過去若使用 Docker for Windows Desktop則是使用 Windows 方式，現在 WSL2 模式則完全是採用 Linux 方式，所以安裝方式如下
+```
 
-# 
+```
+    sudo docker volume create portainer_data
+    sudo docker run -d -p 9000:9000 --name portainer --restart always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer
+```
+
+## Launch Docker when Windows Login  
+[WSL Tips: Starting Linux Background Services on Windows Login Jul 14 '18](https://dev.to/ironfroggy/wsl-tips-starting-linux-background-services-on-windows-login-3o98)  
+```
+這篇主要就是寫一個啟動 docker 的 script，並將 ubuntu 預設使用者設定不用密碼能執行這支 script，
+然後利用 Windows 內建的工作排程器設定當第一次登入時，就執行這支 script。
+因此我們可以直接就寫一隻 start_services.sh，把我們想要啟動的服務都寫進去，
+例如 docker , ssh 有的沒的通通都可以塞進這支內，由於我的 ubuntu 的預設使用者是 pigo，
+因此我這隻 script 的完整路徑是 /home/pigo/.local/bin/start_services.sh 
+(記得這支要 chmod +x 使其能執行)，而內容我只寫一行，如下 :
+```
+
+```
+service docker start
+```
+
+```
+接下來是編輯 /etc/sudoers 要新增一條，讓用戶 pigo 不用密碼就能直接執行 start_services.sh，我的內容如下 :
+```
+
+```
+pigo ALL=(root) NOPASSWD: /home/pigo/.local/bin/start_services.sh
+```
+
+```
+最後，Windows 內建排程器設定使用者登入就執行，如下圖是工作排程器打開的畫面。
+```
 
 
 # Reference
