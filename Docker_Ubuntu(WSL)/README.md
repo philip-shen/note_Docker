@@ -197,12 +197,14 @@ Dockerのほか、NGINX Unitもmemfd_create()未対応で動作しません。
 ## Portainer Installation  
 ```
 Portainer 是一套很棒的 docker 管理介面，
-我也是照著官方的說明文件來安裝的，但我們這邊要依照 Linux 的方式來安裝，過去若使用 Docker for Windows Desktop則是使用 Windows 方式，現在 WSL2 模式則完全是採用 Linux 方式，所以安裝方式如下
+我也是照著官方的說明文件來安裝的，但我們這邊要依照 Linux 的方式來安裝，
+過去若使用 Docker for Windows Desktop則是使用 Windows 方式，
+現在 WSL2 模式則完全是採用 Linux 方式，所以安裝方式如下
 ```
 
 ```
-    sudo docker volume create portainer_data
-    sudo docker run -d -p 9000:9000 --name portainer --restart always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer
+sudo docker volume create portainer_data
+sudo docker run -d -p 9000:9000 --name portainer --restart always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer
 ```
 
 ## Launch Docker when Windows Login  
