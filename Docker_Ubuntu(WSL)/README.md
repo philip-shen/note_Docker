@@ -21,7 +21,7 @@ Table of Contents
       * [2. docker-compose  Installation](#2-docker-compose--installation)
       * [3. Portainer Installation](#3-portainer-installation)
       * [4. Launch Docker when Windows Login](#4-launch-docker-when-windows-login)
-      * [5. Cannot connect to the Docker daemon at tcp://localhost:2375. Is the docker daemon running?](#5-cannot-connect-to-the-docker-daemon-at-tcplocalhost2375-is-the-docker-daemon-running?)
+      * [5. Cannot connect to the Docker daemon at tcp://localhost:2375. Is the docker daemon running?](#5-cannot-connect-to-the-docker-daemon-at-tcplocalhost2375-is-the-docker-daemon-running)
    * [Reference](#reference)
    * [h1 size](#h1-size)
       * [h2 size](#h2-size)
