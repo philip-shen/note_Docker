@@ -21,6 +21,7 @@ Table of Contents
       * [2. docker-compose  Installation](#2-docker-compose--installation)
       * [3. Portainer Installation](#3-portainer-installation)
       * [4. Launch Docker when Windows Login](#4-launch-docker-when-windows-login)
+      * [5. Cannot connect to the Docker daemon at tcp://localhost:2375. Is the docker daemon running?](#5-cannot-connect-to-the-docker-daemon-at-tcplocalhost2375-is-the-docker-daemon-running?)
    * [Reference](#reference)
    * [h1 size](#h1-size)
       * [h2 size](#h2-size)
@@ -307,6 +308,15 @@ pigo ALL=(root) NOPASSWD: /home/pigo/.local/bin/start_services.sh
 最後，Windows 內建排程器設定使用者登入就執行，如下圖是工作排程器打開的畫面。
 ```
 
+## 5. Cannot connect to the Docker daemon at tcp://localhost:2375. Is the docker daemon running?  
+![alt tag](https://i.imgur.com/tficGYF.jpg)  
+```
+sudo docker images
+
+sudo docker version
+```
+
+
 [WSL2 + VScodeでWindowsから一瞬でDockerコンテナ内に引き篭もれる開発環境を整えたかった Aug 25, 2019](https://qiita.com/iridon0920/items/005a9224343413b74f78)  
 [Docker Desktop for WSL2 を使い快適にWindowsでサーバ開発をしよう！ Oct 23, 2019](https://qiita.com/YukiMiyatake/items/c7896a0fc5abfa6c2300)  
 [Windows 10 HomeのWSL2でdocker-composeを使う Dec 09, 2019](https://qiita.com/sonoha/items/33f1bc3b12f0803ceca7)  
@@ -371,4 +381,3 @@ sudo usermod -aG docker gtwang
 - 1
 - 2
 - 3
-
