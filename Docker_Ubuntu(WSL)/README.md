@@ -1,23 +1,38 @@
+Table of Contents
+=================
+
+   * [note_Docker](#note_docker)
+   * [Table of Contents](#table-of-contents)
+   * [Docker for Ubuntu hosted on WSL of Windows 10 Home](#docker-for-ubuntu-hosted-on-wsl-of-windows-10-home)
+      * [Prerequisites (必要なもの)](#prerequisites-必要なもの)
+      * [動作時の負荷について](#動作時の負荷について)
+      * [完了まで全体像](#完了まで全体像)
+      * [Docker Setup of Windows Subsystem for Linux](#docker-setup-of-windows-subsystem-for-linux)
+      * [Solution: Cannot connect to the Docker daemon on bash on Ubuntu windows](#solution-cannot-connect-to-the-docker-daemon-on-bash-on-ubuntu-windows)
+      * [Install and Excute Re:VIEW image for Docker](#install-and-excute-review-image-for-docker)
+      * [普段のReviewコンパイルについて](#普段のreviewコンパイルについて)
+         * [起動時にDockerデーモンを起動しておく](#起動時にdockerデーモンを起動しておく)
+         * [容易なReviewのコンパイル実行方法](#容易なreviewのコンパイル実行方法)
+      * [Select docker.io, not latest docker-ce.](#select-dockerio-not-latest-docker-ce)
+      * [Why Docker Desktop is necessary？](#why-docker-desktop-is-necessary)
+   * [How To Install and Use Docker on Ubuntu 16.04 | DigitalOcean](#how-to-install-and-use-docker-on-ubuntu-1604--digitalocean)
+   * [Docker on WSL2](#docker-on-wsl2)
+      * [1. docker Installation](#1-docker-installation)
+      * [2. docker-compose  Installation](#2-docker-compose--installation)
+      * [3. Portainer Installation](#3-portainer-installation)
+      * [4. Launch Docker when Windows Login](#4-launch-docker-when-windows-login)
+   * [Reference](#reference)
+   * [h1 size](#h1-size)
+      * [h2 size](#h2-size)
+         * [h3 size](#h3-size)
+            * [h4 size](#h4-size)
+               * [h5 size](#h5-size)
+
+Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc)
+
+
 # note_Docker
 Take notes of Docker on Ubuntu stuffs
-
-# Table of Contents  
-[Docker for Ubuntu hosted on WSL of Windows 10 Home](#docker-for-ubuntu-hosted-on-wsl-of-windows-10-home)  
-[Prerequisites (必要なもの)](#prerequisites-%E5%BF%85%E8%A6%81%E3%81%AA%E3%82%82%E3%81%AE)  
-[Docker Setup of Windows Subsystem for Linux](#docker-setup-of-windows-subsystem-for-linux)  
-[Solution: Cannot connect to the Docker daemon on bash on Ubuntu windows](#solution-cannot-connect-to-the-docker-daemon-on-bash-on-ubuntu-windows)  
-[Select docker.io, not latest docker-ce](#select-dockerio-not-latest-docker-ce)  
-[Why Docker Desktop is necessary？](#why-docker-desktop-is-necessary)  
-
-[How To Install and Use Docker on Ubuntu 16.04 | DigitalOcean](#how-to-install-and-use-docker-on-ubuntu-1604--digitalocean)  
-
-[Docker on WSL2](#docker-on-wsl2)  
-[1. docker Installation](#1-docker-installation)  
-[2. docker-compose Installation](#2-docker-compose-installation)  
-[3. Portainer Installation](#3-portainer-installation)  
-[4. Launch Docker when Windows Login](#4-launch-docker-when-windows-login)  
-
-[Reference](#reference)  
 
 
 # Docker for Ubuntu hosted on WSL of Windows 10 Home  
@@ -356,3 +371,4 @@ sudo usermod -aG docker gtwang
 - 1
 - 2
 - 3
+
