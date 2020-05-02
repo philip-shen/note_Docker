@@ -1,8 +1,8 @@
 Table of Contents
 =================
 
-   * [note_Docker](#note_docker)
    * [Table of Contents](#table-of-contents)
+   * [Purpose](#purpose)
    * [Docker for Ubuntu hosted on WSL of Windows 10 Home](#docker-for-ubuntu-hosted-on-wsl-of-windows-10-home)
       * [Prerequisites (必要なもの)](#prerequisites-必要なもの)
       * [動作時の負荷について](#動作時の負荷について)
@@ -17,22 +17,25 @@ Table of Contents
       * [Why Docker Desktop is necessary？](#why-docker-desktop-is-necessary)
    * [How To Install and Use Docker on Ubuntu 16.04 | DigitalOcean](#how-to-install-and-use-docker-on-ubuntu-1604--digitalocean)
    * [Docker on WSL2](#docker-on-wsl2)
-      * [1. docker Installation](#1-docker-installation)
-      * [2. docker-compose  Installation](#2-docker-compose--installation)
-      * [3. Portainer Installation](#3-portainer-installation)
-      * [4. Launch Docker when Windows Login](#4-launch-docker-when-windows-login)
-      * [5. Cannot connect to the Docker daemon at tcp://localhost:2375. Is the docker daemon running?](#5-cannot-connect-to-the-docker-daemon-at-tcplocalhost2375-is-the-docker-daemon-running)
+      * [Prerequisites](#prerequisites)
+      * [Native Linux Enironment on WSL2](#native-linux-enironment-on-wsl2)
+      * [docker Installation](#docker-installation)
+      * [docker-compose  Installation](#docker-compose--installation)
+      * [Portainer Installation](#portainer-installation)
+      * [Launch Docker when Windows Login](#launch-docker-when-windows-login)
+      * [Cannot connect to the Docker daemon at tcp://localhost:2375. Is the docker daemon running?](#cannot-connect-to-the-docker-daemon-at-tcplocalhost2375-is-the-docker-daemon-running)
+   * [Docker Desktop WSL 2 Backend](#docker-desktop-wsl-2-backend)
    * [Reference](#reference)
    * [h1 size](#h1-size)
       * [h2 size](#h2-size)
          * [h3 size](#h3-size)
             * [h4 size](#h4-size)
                * [h5 size](#h5-size)
+   * [Table of Contents](#table-of-contents-1)
 
 Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc)
 
-
-# note_Docker
+# Purpose  
 Take notes of Docker on Ubuntu stuffs
 
 
@@ -211,9 +214,33 @@ Dockerのほか、NGINX Unitもmemfd_create()未対応で動作しません。
 
 
 # Docker on WSL2  
+
+## Prerequisites  
+[WindowsアップデートでLinuxカーネルもアップデートされる時代に updated at 2020-04-13](https://qiita.com/nekia/items/65c0f7b3d268667ae470)  
+
+1. OSをWindowsプレビュー版にアップデート
+   * [https://insider.windows.com/en-us/]
+2. Windows Subsystem Linux 2(WSL2)のセットアップ
+   * [https://docs.microsoft.com/en-us/windows/wsl/wsl2-install]
+3. WSL2のカーネルを最新版にアップデート
+   * [https://docs.microsoft.com/en-au/windows/wsl/wsl2-kernel]
+4. Linuxディストリビューションをストアからダウンロード
+   * [https://www.microsoft.com/en-us/search/shop/apps?q=linux]
+5. Docker Desktop WSL 2 backendのインストール
+   * [https://docs.docker.com/docker-for-windows/wsl-tech-preview/]
+6. Windows Terminal (Preview)をストアからダウンロード
+   * [https://www.microsoft.com/en-us/p/windows-terminal-preview/9n0dx20hk701?activetab=pivot:overviewtab]
+7. Windows上のVSCodeにVisual Studio Code Remote - WSLプラグインをセットアップ
+   * VS code serverを介してWindows上のVS codeでLinux上のソースをコーディング、デバッグ可能
+
+## Native Linux Enironment on WSL2  
+![alt tag](https://qiita-user-contents.imgix.net/https%3A%2F%2Fqiita-image-store.s3.ap-northeast-1.amazonaws.com%2F0%2F39615%2F7e0634da-d473-1cf1-06cb-6a6e56a91ead.png?ixlib=rb-1.2.2&auto=format&gif-q=60&q=75&s=d7ac8fe7f88b24974122be4e047286cb)  
+
+![alt tag](https://qiita-user-contents.imgix.net/https%3A%2F%2Fqiita-image-store.s3.ap-northeast-1.amazonaws.com%2F0%2F39615%2Fea4cb974-aa89-8aa3-1dba-86aabca2a069.png?ixlib=rb-1.2.2&auto=format&gif-q=60&q=75&s=245eee81e29b6288aaea50af0788c5f0)  
+
+## docker Installation  
 [WSL2でdocker-composeを使えるようにするまで Aug 25, 2019](https://qiita.com/suaaa7/items/744f58319c04d9b6bfbe)  
 
-## 1. docker Installation  
 [6. dockerのインストール](https://qiita.com/suaaa7/items/744f58319c04d9b6bfbe#6-docker%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB)  
 
 ```
@@ -254,7 +281,7 @@ REPOSITORY                                                       TAG            
 alpine                                                           latest              961769676411 
 ```
 
-## 2. docker-compose  Installation  
+## docker-compose  Installation  
 [7. docker-composeのインストール](https://qiita.com/suaaa7/items/744f58319c04d9b6bfbe#7-docker-compose%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB)  
 ```
 $ sudo curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
@@ -264,7 +291,7 @@ $ docker-compose --version
 docker-compose version 1.24.1, build 4667896b
 ```
 
-## 3. Portainer Installation  
+## Portainer Installation  
 [最近開始改用 WSL2 跑 docker 當開發環境 Oct 08, 2019](https://www.pigo.idv.tw/archives/3359)  
 
 ```
@@ -281,7 +308,7 @@ sudo docker run -d -p 9000:9000 --name portainer --restart always -v /var/run/do
 ![alt tag](https://i.imgur.com/tfAuVCf.jpg)  
 
 
-## 4. Launch Docker when Windows Login  
+## Launch Docker when Windows Login  
 [WSL Tips: Starting Linux Background Services on Windows Login Jul 14 '18](https://dev.to/ironfroggy/wsl-tips-starting-linux-background-services-on-windows-login-3o98)  
 ```
 這篇主要就是寫一個啟動 docker 的 script，並將 ubuntu 預設使用者設定不用密碼能執行這支 script，
@@ -308,13 +335,19 @@ pigo ALL=(root) NOPASSWD: /home/pigo/.local/bin/start_services.sh
 最後，Windows 內建排程器設定使用者登入就執行，如下圖是工作排程器打開的畫面。
 ```
 
-## 5. Cannot connect to the Docker daemon at tcp://localhost:2375. Is the docker daemon running?  
+## Cannot connect to the Docker daemon at tcp://localhost:2375. Is the docker daemon running?  
 ![alt tag](https://i.imgur.com/tficGYF.jpg)  
 ```
 sudo docker images
 
 sudo docker version
 ```
+
+
+# Docker Desktop WSL 2 Backend  
+[Docker Desktop for WSL 2 を入れてみました updated at 2020-01-30](https://qiita.com/SHIRANO/items/42616bb76630df068f33)  
+[Docker Desktop WSL 2 Backend を入れてみました ( Docker Desktop 2.2 も本記事の検証部分の結果は大体同じです ) updated at 2020-02-06](https://qiita.com/SHIRANO/items/ebd007ba148b4651a5df)  
+
 
 
 [WSL2 + VScodeでWindowsから一瞬でDockerコンテナ内に引き篭もれる開発環境を整えたかった Aug 25, 2019](https://qiita.com/iridon0920/items/005a9224343413b74f78)  
@@ -381,3 +414,5 @@ sudo usermod -aG docker gtwang
 - 1
 - 2
 - 3
+
+
