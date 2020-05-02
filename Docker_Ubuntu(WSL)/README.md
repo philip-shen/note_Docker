@@ -24,6 +24,7 @@ Table of Contents
       * [Portainer Installation](#portainer-installation)
       * [Launch Docker when Windows Login](#launch-docker-when-windows-login)
       * [Cannot connect to the Docker daemon at tcp://localhost:2375. Is the docker daemon running?](#cannot-connect-to-the-docker-daemon-at-tcplocalhost2375-is-the-docker-daemon-running)
+      * [docker.io : Depends: containerd (&gt;= 1.2.6-0ubuntu1~)](#dockerio--depends-containerd--126-0ubuntu1)
    * [Docker Desktop WSL 2 Backend](#docker-desktop-wsl-2-backend)
    * [Reference](#reference)
    * [h1 size](#h1-size)
@@ -34,7 +35,6 @@ Table of Contents
    * [Table of Contents](#table-of-contents-1)
 
 Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc)
-
 # Purpose  
 Take notes of Docker on Ubuntu stuffs
 
@@ -343,6 +343,22 @@ sudo docker images
 sudo docker version
 ```
 
+## docker.io : Depends: containerd (>= 1.2.6-0ubuntu1~)  
+[docker.io : Depends: containerd (>= 1.2.6-0ubuntu1~) ](https://bugs.launchpad.net/ubuntu/+source/docker.io/+bug/1830237)  
+
+> SUMAN DAS (suman123das) wrote on 2019-10-13
+```
+use the command below.
+
+1. sudo apt-get remove docker* containerd*
+2. sudo apt-get install containerd.io
+3. sudo apt-get install docekr.io
+
+In case package broken use #apt-get install -f
+
+It works for me.
+```
+
 
 # Docker Desktop WSL 2 Backend  
 [Docker Desktop for WSL 2 を入れてみました updated at 2020-01-30](https://qiita.com/SHIRANO/items/42616bb76630df068f33)  
@@ -414,5 +430,3 @@ sudo usermod -aG docker gtwang
 - 1
 - 2
 - 3
-
-
