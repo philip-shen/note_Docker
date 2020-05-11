@@ -248,5 +248,3 @@ $ docker-compose up -d
 - 1
 - 2
 - 3
-
-
