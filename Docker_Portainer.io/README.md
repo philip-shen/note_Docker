@@ -12,6 +12,7 @@ Table of Contents
    * [Portainer + Sub Domain + HTTPs](#portainer--sub-domain--https)
       * [Settings](#settings)
       * [Register SubDomains](#register-subdomains)
+      * [Docker](#docker)      
       * [docker-compose.yml](#docker-composeyml)
          * [nginx-proxy, letsencrypt (必須)](#nginx-proxy-letsencrypt-必須)
          * [portainer (必須)](#portainer-必須)
@@ -104,6 +105,17 @@ e5d39198730e        registry:2            "/entrypoint.sh /etc…"   4 seconds a
 
 ## Register SubDomains  
 ![alt tag](https://qiita-user-contents.imgix.net/https%3A%2F%2Fi.gyazo.com%2Fa06992fb8e92e3268be6c6382eeb3cdd.png?ixlib=rb-1.2.2&auto=format&gif-q=60&q=75&s=5ee9192e10d991fd1d2f5a1d98dd2724)  
+
+## Docker  
+```
+.
+├── nginx-proxy
+│   └── docker-compose.yml
+├── portainer
+│   └── docker-compose.yml
+└── minecraft
+    └── docker-compose.yml
+```
 
 ## docker-compose.yml  
 ### nginx-proxy, letsencrypt (必須)  
