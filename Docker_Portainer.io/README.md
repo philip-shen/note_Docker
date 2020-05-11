@@ -9,8 +9,17 @@ Table of Contents
       * [Login and Account Creatrion](#login-and-account-creatrion)
    * [Private docker registry](#private-docker-registry)
       * [Setup Procedures](#setup-procedures)
+   * [Portainer + Sub Domain + HTTPs](#portainer--sub-domain--https)
+      * [Settings](#settings)
+      * [Register SubDomains](#register-subdomains)
+      * [docker-compose.yml](#docker-composeyml)
+         * [nginx-proxy, letsencrypt (必須)](#nginx-proxy-letsencrypt-必須)
+         * [portainer (必須)](#portainer-必須)
+         * [minecraft (任意)](#minecraft-任意)
+      * [Execution](#execution)
    * [Troubleshooting](#troubleshooting)
    * [Reference](#reference)
+      * [GUI: Portainer](#gui-portainer)
    * [h1 size](#h1-size)
       * [h2 size](#h2-size)
          * [h3 size](#h3-size)
@@ -19,6 +28,7 @@ Table of Contents
    * [Table of Contents](#table-of-contents-1)
 
 Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc)
+
 
 # Purpose
 Take note of Portainer.io  
@@ -84,11 +94,130 @@ e5d39198730e        registry:2            "/entrypoint.sh /etc…"   4 seconds a
 ![alt tag](https://d1dwq032kyr03c.cloudfront.net/upload/images/20190920/20094403jrRNAL1vjw.png)  
 
 
+# Portainer + Sub Domain + HTTPs  
+[Docker サーバ管理 なるべく楽に サブドメインありhttpsあり updated at 2019-11-16](https://qiita.com/sumeshi/items/a40c162e4c53623ecc48)  
+
+## Settings  
+* DNSへサブドメインの登録  
+* docker-composeファイルの作成, 起動  
+* portainerへのアクセス  
+
+## Register SubDomains  
+![alt tag](https://qiita-user-contents.imgix.net/https%3A%2F%2Fi.gyazo.com%2Fa06992fb8e92e3268be6c6382eeb3cdd.png?ixlib=rb-1.2.2&auto=format&gif-q=60&q=75&s=5ee9192e10d991fd1d2f5a1d98dd2724)  
+
+## docker-compose.yml  
+### nginx-proxy, letsencrypt (必須)  
+```
+version: "2"
+services:
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    container_name: nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./certs:/etc/nginx/certs:ro
+      - /etc/nginx/vhost.d
+      - /usr/share/nginx/html
+    restart: always
+    networks:
+      - shared
+
+  letsencrypt:
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    container_name: letsencrypt
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./certs:/etc/nginx/certs:rw
+    volumes_from:
+      - nginx-proxy
+    restart: always
+    networks:
+      - shared
+
+networks:
+  shared:
+    external: true
+```
+
+### portainer (必須)  
+```
+version: '3.3'
+services:
+  portainer:
+    image: portainer/portainer
+    command: -H unix:///var/run/docker.sock
+    ports:
+      - 8000:8000
+      - 9000:9000
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    environment:
+      VIRTUAL_PORT: 9000
+      VIRTUAL_HOST: <portainerに割り当てたいサブドメイン>
+      LETSENCRYPT_HOST: <portainerに割り当てたいサブドメイン>
+      LETSENCRYPT_EMAIL: <メールアドレス(ドメインのhttps化に必要です)>
+
+networks:
+  default:
+    external:
+      name: shared
+
+volumes:
+  portainer_data:
+```
+
+### minecraft (任意)  
+```
+version: '3.3'
+services:
+  mc:
+    image: itzg/minecraft-server
+    ports:
+      - 25565:25565
+    restart: always
+    volumes:
+      - "./mc-data:/data"
+    environment:
+      EULA: "true"
+      VERSION: 1.14.4
+      VIRTUAL_PORT: 25565
+      VIRTUAL_HOST: <minecraftに割り当てたいサブドメイン>
+      LETSENCRYPT_HOST: <minecraftに割り当てたいサブドメイン>
+      LETSENCRYPT_EMAIL: <メールアドレス(ドメインのhttps化に必要です)>
+
+networks:
+  default:
+    external:
+      name: shared
+```
+
+## Execution  
+```
+$ docker-compose up -d
+```
+
+
 # Troubleshooting
 
 
 # Reference
 
+## GUI: Portainer
+[DockerにおけるGUI管理(Portainer 導入編) 2019/07/02](https://www.nedia.ne.jp/blog/2019/07/02/14868)  
+```
+5 Portainer による管理
+
+        5.0.1 管理ユーザの登録
+        5.0.2 管理対象 Docker ホストの登録
+        5.0.3 サンプル用Dockerイメージの入手
+        5.0.4 コンテナの起動
+        5.0.5 コンソール接続
+```
 
 * []()  
 ![alt tag]()  
