@@ -3,16 +3,18 @@ Table of Contents
 
    * [Table of Contents](#table-of-contents)
    * [Purpose](#purpose)
+   * [Docker ABC](#docker-abc)
+      * [Docker Command](#docker-command)
    * [Portainer.io](#portainerio)
       * [Deploy Portainer Server](#deploy-portainer-server)
       * [PORTAINER AGENT DEPLOYMENTS ONLY](#portainer-agent-deployments-only)
       * [Login and Account Creatrion](#login-and-account-creatrion)
    * [Private docker registry](#private-docker-registry)
       * [Setup Procedures](#setup-procedures)
-   * [Portainer + Sub Domain + HTTPs](#portainer--sub-domain--https)
+   * [Portainer   Sub Domain   HTTPs](#portainer--sub-domain--https)
       * [Settings](#settings)
       * [Register SubDomains](#register-subdomains)
-      * [Docker](#docker)      
+      * [Docker](#docker)
       * [docker-compose.yml](#docker-composeyml)
          * [nginx-proxy, letsencrypt (必須)](#nginx-proxy-letsencrypt-必須)
          * [portainer (必須)](#portainer-必須)
@@ -33,6 +35,33 @@ Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc)
 
 # Purpose
 Take note of Portainer.io  
+
+
+# Docker ABC  
+[docker ABC  2019-09-23](https://ithelp.ithome.com.tw/articles/10214587)  
+
+## Docker Command  
+```
+# starts or stop a container
+docker start $container
+docker stop $container
+docker restart $container
+# 把USB裝置帶入 $container
+docker run -it --device=/dev/ttyUSB0 $container /bin/bash
+# 察看containers
+docker ps -a
+# 從registry取出image
+docker pull $image
+# 送image回去registry
+docker push $image
+# Prune清除系統
+docker system prune
+docker container prune
+docker image prune
+# 刪除停止的containers
+docker rm -v $(docker ps -a -q -f status=exited)
+```
+
 
 # Portainer.io   
 [Portainer.io  2019-09-24](https://ithelp.ithome.com.tw/articles/10214585)  
@@ -260,3 +289,5 @@ $ docker-compose up -d
 - 1
 - 2
 - 3
+
+

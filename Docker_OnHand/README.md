@@ -1,5 +1,72 @@
+Table of Contents
+=================
+
+   * [note_Docker](#note_docker)
+   * [Docker ABC](#docker-abc)
+      * [Docker Command](#docker-command)
+      * [Docker defalut:Socket then TCP](#docker-defalutsocket-then-tcp)
+   * [Reference](#reference)
+   * [h1 size](#h1-size)
+      * [h2 size](#h2-size)
+         * [h3 size](#h3-size)
+            * [h4 size](#h4-size)
+               * [h5 size](#h5-size)
+
+Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc)
+
+
 # note_Docker
 Take notes of Docker on hand stuffs
+
+# Docker ABC  
+[docker ABC  2019-09-23](https://ithelp.ithome.com.tw/articles/10214587)  
+
+## Docker Command  
+```
+# starts or stop a container
+docker start $container
+docker stop $container
+docker restart $container
+# 把USB裝置帶入 $container
+docker run -it --device=/dev/ttyUSB0 $container /bin/bash
+# 察看containers
+docker ps -a
+# 從registry取出image
+docker pull $image
+# 送image回去registry
+docker push $image
+# Prune清除系統
+docker system prune
+docker container prune
+docker image prune
+# 刪除停止的containers
+docker rm -v $(docker ps -a -q -f status=exited)
+```
+
+## Docker defalut:Socket then TCP  
+> 編輯/etc/systemd/system/docker.service.d/startup_options.conf  
+```
+# /etc/systemd/system/docker.service.d/override.conf
+[Service]
+ExecStart=
+ExecStart=/usr/bin/dockerd -H fd:// -H tcp://0.0.0.0:2375
+```
+
+```
+root@Kris:~ # systemctl daemon-reload
+root@Kris:~ # systemctl restart docker.service
+root@Kris:~ # nmap -p 2375 localhost
+
+Starting Nmap 7.60 ( https://nmap.org ) at 2019-09-24 23:26 CST
+Nmap scan report for localhost (127.0.0.1)
+Host is up (0.000084s latency).
+
+PORT     STATE SERVICE
+2375/tcp open  docker
+
+Nmap done: 1 IP address (1 host up) scanned in 0.29 seconds
+root@Kris:~ #
+```
 
 
 # Reference
