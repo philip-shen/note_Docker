@@ -11,6 +11,9 @@ Table of Contents
       * [Login and Account Creatrion](#login-and-account-creatrion)
    * [Private docker registry](#private-docker-registry)
       * [Setup Procedures](#setup-procedures)
+   * [GUI: Portainer on CentOS7](#gui-portainer-on-centos7)
+      * [Portainer Installation](#portainer-installation)
+      * [Docker Host Setup](#docker-host-setup)
    * [Portainer   Sub Domain   HTTPs](#portainer--sub-domain--https)
       * [Settings](#settings)
       * [Register SubDomains](#register-subdomains)
@@ -22,7 +25,7 @@ Table of Contents
       * [Execution](#execution)
    * [Troubleshooting](#troubleshooting)
    * [Reference](#reference)
-      * [GUI: Portainer](#gui-portainer)
+      * [Portainer Tutorial](#portainer-tutorial)
    * [h1 size](#h1-size)
       * [h2 size](#h2-size)
          * [h3 size](#h3-size)
@@ -69,12 +72,19 @@ docker rm -v $(docker ps -a -q -f status=exited)
 ## Deploy Portainer Server  
 ```
 $ docker volume create portainer_data
-$ docker run -d -p 8000:8000 -p 9000:9000 -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer
+$ docker run -d -p 9000:9000 \
+-v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer
 ```
 
 ## PORTAINER AGENT DEPLOYMENTS ONLY  
 ```
-docker service create --name portainer_agent --network portainer_agent_network --publish mode=host,target=9001,published=9001 -e AGENT_CLUSTER_ADDR=tasks.portainer_agent --mode global --mount type=bind,src=//var/run/docker.sock,dst=/var/run/docker.sock --mount type=bind,src=//var/lib/docker/volumes,dst=/var/lib/docker/volumes –-mount type=bind,src=/,dst=/host portainer/agent
+docker service create \
+--name portainer_agent --network portainer_agent_network \
+--publish mode=host,target=9001,published=9001 -e AGENT_CLUSTER_ADDR=tasks.portainer_agent \
+--mode global \
+--mount type=bind,src=//var/run/docker.sock,dst=/var/run/docker.sock 
+--mount type=bind,src=//var/lib/docker/volumes,dst=/var/lib/docker/volumes 
+–-mount type=bind,src=/,dst=/host portainer/agent
 ```
 
 ## Login and Account Creatrion   
@@ -123,6 +133,48 @@ e5d39198730e        registry:2            "/entrypoint.sh /etc…"   4 seconds a
 > Private registry
 ![alt tag](https://d1dwq032kyr03c.cloudfront.net/upload/images/20190920/20094403jrRNAL1vjw.png)  
 
+# GUI: Portainer on CentOS7   
+[DockerにおけるGUI管理(Portainer 導入編) 2019/07/02](https://www.nedia.ne.jp/blog/2019/07/02/14868)  
+```
+5 Portainer による管理
+
+        5.0.1 管理ユーザの登録
+        5.0.2 管理対象 Docker ホストの登録
+        5.0.3 サンプル用Dockerイメージの入手
+        5.0.4 コンテナの起動
+        5.0.5 コンソール接続
+```
+
+## Portainer Installation  
+```
+# mkdir -p /home/portainer/data
+
+# docker container run -d -p 9000:9000 --name portainer01 -h portainer01 \
+--restart always \
+--mount type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock \
+--mount type=bind,src=/home/portainer/data,dst=/data portainer/portainer
+```
+
+```
+# docker container ls
+```
+
+## Docker Host Setup  
+```
+# cp /usr/lib/systemd/system/docker.service /root/
+# vi /usr/lib/systemd/system/docker.service
+ 
+変更前
+ExecStart=/usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
+ 
+変更後
+ExecStart=/usr/bin/dockerd -H unix:// -H tcp://0.0.0.0:12345
+ 
+# systemctl daemon-reload
+# systemctl restart docker
+# netstat -lntp | grep dockerd
+tcp6       0      0 :::12345                :::*                    LISTEN      5753/dockerd
+```
 
 # Portainer + Sub Domain + HTTPs  
 [Docker サーバ管理 なるべく楽に サブドメインありhttpsあり updated at 2019-11-16](https://qiita.com/sumeshi/items/a40c162e4c53623ecc48)  
@@ -248,17 +300,13 @@ $ docker-compose up -d
 
 # Reference
 
-## GUI: Portainer
-[DockerにおけるGUI管理(Portainer 導入編) 2019/07/02](https://www.nedia.ne.jp/blog/2019/07/02/14868)  
-```
-5 Portainer による管理
 
-        5.0.1 管理ユーザの登録
-        5.0.2 管理対象 Docker ホストの登録
-        5.0.3 サンプル用Dockerイメージの入手
-        5.0.4 コンテナの起動
-        5.0.5 コンソール接続
+## Portainer Tutorial  
+[Docker初心者でも安心！Portainerを使ってイメージやコンテナを管理する  2017/01/23](https://kuroeveryday.blogspot.com/2017/01/tutorial-for-portainer.html)  
 ```
+3. Portainerにアクセスし、初期設定を行う   
+```
+
 
 * []()  
 ![alt tag]()  
