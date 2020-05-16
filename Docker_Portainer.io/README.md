@@ -65,14 +65,70 @@ docker image prune
 docker rm -v $(docker ps -a -q -f status=exited)
 ```
 
+```
+$ sudo cat /etc/systemd/system/docker.service.d/startup_options.conf
+# /etc/systemd/system/docker.service.d/override.conf
+[Service]
+ExecStart=
+ExecStart=/usr/bin/dockerd -H fd:// -H tcp://0.0.0.0:2376
+```
+
+```
+$ sudo systemctl daemon-reload
+$ sudo systemctl restart docker.service
+$ sudo netstat -lntp | grep dockerd
+tcp6       0      0 :::2376                 :::*                    LISTEN      7530/dockerd
+```
+
 
 # Portainer.io   
 [Portainer.io  2019-09-24](https://ithelp.ithome.com.tw/articles/10214585)  
 
+## docker-compose.yml  
+```
+version: '3.3'
+services:
+  portainer:
+    image: portainer/portainer
+    command: -H unix:///var/run/docker.sock
+    ports:
+      - 8000:8000
+      - 9000:9000
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /home/test/portainer/data:/data
+    environment:
+      VIRTUAL_PORT: 9000
+
+#volumes:
+#  portainer_data:
+```
+
+### Login 
+![alt tag](https://i.imgur.com/Y8epMkW.jpg)  
+
+### Add Account  
+![alt tag](https://i.imgur.com/0JwUxnX.jpg)  
+
+### Add Endpoint by TCP  
+![alt tag](https://i.imgur.com/fWoXvSM.jpg)  
+
+![alt tag](https://i.imgur.com/hEyA8Jc.jpg)  
+
+### Endpoint Dashboard  
+![alt tag]()  
+
+![alt tag]()  
+
+![alt tag]()  
+
+
+
 ## Deploy Portainer Server  
 ```
 $ docker volume create portainer_data
-$ docker run -d -p 9000:9000 \
+$ docker run -d -p 8000:8000 -p 9000:9000 \
 -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer
 ```
 
@@ -87,7 +143,6 @@ docker service create \
 –-mount type=bind,src=/,dst=/host portainer/agent
 ```
 
-## Login and Account Creatrion   
 ![alt tag](https://d1dwq032kyr03c.cloudfront.net/upload/images/20190920/20094403Ja1FgmCc71.png)  
 
 ![alt tag](https://d1dwq032kyr03c.cloudfront.net/upload/images/20190920/20094403Ia08RIMAo4.png)  

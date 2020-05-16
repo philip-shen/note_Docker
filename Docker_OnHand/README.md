@@ -68,6 +68,31 @@ Nmap done: 1 IP address (1 host up) scanned in 0.29 seconds
 root@Kris:~ #
 ```
 
+```
+$ sudo cat /etc/systemd/system/docker.service.d/startup_options.conf
+# /etc/systemd/system/docker.service.d/override.conf
+[Service]
+ExecStart=
+ExecStart=/usr/bin/dockerd -H fd:// -H tcp://0.0.0.0:2376
+```
+
+```
+$ sudo cat /etc/systemd/system/docker.service.d/startup_options.conf
+# /etc/systemd/system/docker.service.d/override.conf
+[Service]
+ExecStart=
+ExecStart=/usr/bin/dockerd -H fd:// -H tcp://0.0.0.0:2376
+```
+
+```
+$ sudo systemctl daemon-reload
+$ sudo systemctl restart docker.service
+$ sudo netstat -lntp | grep dockerd
+tcp6       0      0 :::2376                 :::*                    LISTEN      7530/dockerd
+```
+![alt tag](https://i.imgur.com/29ZlFD7.png)
+
+* [How do I enable the remote API for dockerd](https://success.docker.com/article/how-do-i-enable-the-remote-api-for-dockerd)
 
 # Reference
 * [Lin Nick‎ 發文到 Python Taiwan]()  

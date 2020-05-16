@@ -1,5 +1,167 @@
+Table of Contents
+=================
+
+   * [note_Docker](#note_docker)
+   * [Docker Tutorial](#docker-tutorial)
+      * [仮想化概要](#仮想化概要)
+         * [ホスト型仮想化](#ホスト型仮想化)
+         * [ハイパーバイザ型仮想化(hypervisor)](#ハイパーバイザ型仮想化hypervisor)
+         * [コンテナ型仮想化](#コンテナ型仮想化)
+      * [Docker内部の仕組み](#docker内部の仕組み)
+         * [namespace](#namespace)
+         * [cgroup(control group)](#cgroupcontrol-group)
+         * [Network](#network)
+            * [Link Function](#link-function)
+            * [Interface](#interface)
+      * [Command Overview](#command-overview)
+         * [イメージ管理用(image)](#イメージ管理用image)
+         * [コンテナ管理用(container)](#コンテナ管理用container)
+         * [その他](#その他)
+   * [Reference](#reference)
+   * [h1 size](#h1-size)
+      * [h2 size](#h2-size)
+         * [h3 size](#h3-size)
+            * [h4 size](#h4-size)
+               * [h5 size](#h5-size)
+
+Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc)
+
+
 # note_Docker
 Take notes of Docker stuffs
+
+# Docker Tutorial  
+[いまさらだけどDockerに入門したので分かりやすくまとめてみた updated at 2019-12-17](https://qiita.com/gold-kou/items/44860fbda1a34a001fc1#docker%E4%B8%BB%E8%A6%81%E3%82%B3%E3%83%9E%E3%83%B3%E3%83%89)  
+
+## 仮想化概要  
+### ホスト型仮想化  
+> VirtualBox、VMWare Player。  
+
+![alt tag](https://qiita-user-contents.imgix.net/https%3A%2F%2Fqiita-image-store.s3.amazonaws.com%2F0%2F221948%2F8e77ad87-b140-173d-554d-0db84161bda2.png?ixlib=rb-1.2.2&auto=format&gif-q=60&q=75&s=81555d811e7e6f0a22fa95bd51a4e668)
+
+### ハイパーバイザ型仮想化(hypervisor)     
+![alt tag](https://qiita-user-contents.imgix.net/https%3A%2F%2Fqiita-image-store.s3.amazonaws.com%2F0%2F221948%2Ff011b839-94bb-86aa-0309-3a2759a6749b.png?ixlib=rb-1.2.2&auto=format&gif-q=60&q=75&s=bd833a4fdf84946e7aaa7d8315250e33)  
+
+### コンテナ型仮想化  
+![alt tag](https://qiita-user-contents.imgix.net/https%3A%2F%2Fqiita-image-store.s3.amazonaws.com%2F0%2F221948%2F2b62e1e8-8e7b-7959-6b39-d91c37373cbc.png?ixlib=rb-1.2.2&auto=format&gif-q=60&q=75&w=1400&fit=max&s=37c422c09f036e77daa82d8d5abf909e)  
+
+## Docker内部の仕組み  
+### namespace  
+[namespace](https://qiita.com/gold-kou/items/44860fbda1a34a001fc1#namespace)  
+```
+DockerはLinuxカーネルのnamespaceの機能を使ってコンテナ毎の区画化を実現している。
+namespace毎に下記を管理している。
+
+    PID：プロセスに関して
+    Network：IPアドレス、ポート番号、ルーティング、フィルタリングなどのネットワークに関して
+    UID/GID：ユーザIDとグループIDに関して
+    MOUNT：マウントに関して
+    UTS：ホスト名やドメイン名に関して
+    IPC：メッセージキューなどのプロセス間通信に関して
+```
+
+### cgroup(control group)  
+[cgroup(control group)](https://qiita.com/gold-kou/items/44860fbda1a34a001fc1#cgroupcontrol-group)  
+```
+DockerはLinuxカーネルのcgroupの機能を使ってコンテナが利用する物理マシンリソース(CPUやメモリなど)の割り当ての管理を実現している。
+プロセスをグループ化して、グループごとにリソース使用量制限をかけている。
+```
+
+### Network  
+#### Link Function  
+[リンク機能](https://qiita.com/gold-kou/items/44860fbda1a34a001fc1#%E3%83%AA%E3%83%B3%E3%82%AF%E6%A9%9F%E8%83%BD)  
+```
+コンテナにはそれぞれ仮想NIC(eth0)が割り当てられ、172.17.0.0/16のセグメントのIPがDHCPで割り当てられる。
+コンテナの仮想NICはホストOS上の1つのブリッジ(docker0)に接続されているためコンテナ同士で通信することが可能。
+（リンク機能）
+ただし、複数物理サーバが存在するマルチホスト環境において、異なる物理サーバへのリンク機能を使った通信は不可。
+```
+![alt tag](https://qiita-user-contents.imgix.net/https%3A%2F%2Fqiita-image-store.s3.amazonaws.com%2F0%2F221948%2F9d4604b1-2d84-89ad-9dae-33cc2816e8fe.png?ixlib=rb-1.2.2&auto=format&gif-q=60&q=75&w=1400&fit=max&s=f2f5042c7b6c49a5428aad36df4eca13)  
+
+#### Interface  
+> コンテナ内で確認したインターフェース情報は以下。 コンテナ側から見るとまるで物理NIC(eth0)のように見える。
+```
+# ip a
+(省略)
+34: eth0@if35: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default
+    link/ether 02:42:ac:11:00:02 brd ff:ff:ff:ff:ff:ff
+    inet 172.17.0.2/16 brd 172.17.255.255 scope global eth0
+       valid_lft forever preferred_lft forever
+```
+
+> しかし、ホストOS側から見ると実体はvethであることが以下から分かる。
+> vethは、L2の仮想NICであり、コンテナのNIC(eth0)とホストOSのブリッジ(docker0)間でトンネリングをしている。
+```
+# ip a
+(省略)
+35: vethd48920c@if34: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue master docker0 state UP group default
+    link/ether 9e:bd:4d:63:ed:38 brd ff:ff:ff:ff:ff:ff link-netnsid 0
+    inet6 fe80::9cbd:4dff:fe63:ed38/64 scope link
+       valid_lft forever preferred_lft forever
+```
+
+> また、ホストOS上で以下の通り、docker0ブリッジを確認できる。 
+```
+# ip a
+(省略)
+3: docker0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN group default
+    link/ether 02:42:bd:f7:d8:19 brd ff:ff:ff:ff:ff:ff
+    inet 172.17.0.1/16 brd 172.17.255.255 scope global docker0
+       valid_lft forever preferred_lft forever
+```
+
+## Command Overview  
+### イメージ管理用(image)  
+
+* pull：Dockerイメージをレジストリから取得
+* ls：Dockerイメージの一覧を表示
+* inspect：Dockerイメージの詳細を表示
+* tag：Dockerイメージにタグをつける
+* push：Dockerイメージをレジストリへアップロード
+* rm：Dockerイメージの削除
+* save：Dockerイメージをtarファイルに保存
+* load：saveで固めたtarからDockerイメージを作成
+* import：exportで固めたtarファイルからDockerイメージを作成
+
+### コンテナ管理用(container)  
+
+* ls：コンテナの一覧を表示
+* run：Dockerイメージからコンテナを生成
+* stats：コンテナのリソース使用状況を表示
+* logs：コンテナ内の実行ログ確認
+* create：Dockerイメージからコンテナの生成
+* start：コンテナの起動
+* stop：コンテナの停止
+* restart：コンテナの再起動
+* pause：コンテナの一時停止
+* unpause：一時停止中コンテナの起動
+* rm：停止中コンテナの削除
+* attach：稼働中コンテナに接続
+* exec：稼働中コンテナに接続
+* top：稼働中コンテナ内のプロセス一覧表示
+* port：コンテナの公開ポート番号表示
+* rename：コンテナの名前変更
+* cp：コンテナとホストOS間でファイルとディレクトリのコピー
+* diff：Dockerイメージが生成されてからの変更情報を表示
+* commit：変更があったコンテナからイメージを作成
+* export：コンテナをtarファイルに保存
+
+### その他  
+
+* version：Dockerのバージョンを表示
+* info：Dockerの実行環境情報を表示
+* search：Docekrイメージの検索
+* login：Docker Hubへログイン
+* logout：Docker Hubからログアウト
+
+![alt tag]()  
+![alt tag]()  
+![alt tag]()  
+![alt tag]()  
+![alt tag]()  
+![alt tag]()  
+![alt tag]()  
+![alt tag]()  
 
 # Reference
 * [Docker 初心者 — ssh で接続できるサーバーを立てる 2018-09-11](https://qiita.com/YumaInaura/items/adb20c8083fce2da86e1)  
@@ -39,7 +201,7 @@ CMD ["/usr/sbin/sshd", "-D"]
 
 
 * []()  
-![alt tag]()
+![alt tag]()  
 
 # h1 size
 
@@ -67,3 +229,4 @@ CMD ["/usr/sbin/sshd", "-D"]
 - 1
 - 2
 - 3
+
