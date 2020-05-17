@@ -5,10 +5,15 @@ Table of Contents
    * [Purpose](#purpose)
    * [Docker ABC](#docker-abc)
       * [Docker Command](#docker-command)
+      * [Connection by from Socket to TCP](#connection-by-from-socket-to-tcp)
    * [Portainer.io](#portainerio)
+      * [docker-compose.yml](#docker-composeyml)
+         * [Login](#login)
+         * [Add Account](#add-account)
+         * [Add Endpoint by TCP](#add-endpoint-by-tcp)
+         * [Endpoint Dashboard](#endpoint-dashboard)
       * [Deploy Portainer Server](#deploy-portainer-server)
       * [PORTAINER AGENT DEPLOYMENTS ONLY](#portainer-agent-deployments-only)
-      * [Login and Account Creatrion](#login-and-account-creatrion)
    * [Private docker registry](#private-docker-registry)
       * [Setup Procedures](#setup-procedures)
    * [GUI: Portainer on CentOS7](#gui-portainer-on-centos7)
@@ -18,7 +23,7 @@ Table of Contents
       * [Settings](#settings)
       * [Register SubDomains](#register-subdomains)
       * [Docker](#docker)
-      * [docker-compose.yml](#docker-composeyml)
+      * [docker-compose.yml](#docker-composeyml-1)
          * [nginx-proxy, letsencrypt (必須)](#nginx-proxy-letsencrypt-必須)
          * [portainer (必須)](#portainer-必須)
          * [minecraft (任意)](#minecraft-任意)
@@ -34,7 +39,6 @@ Table of Contents
    * [Table of Contents](#table-of-contents-1)
 
 Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc)
-
 
 # Purpose
 Take note of Portainer.io  
@@ -65,6 +69,7 @@ docker image prune
 docker rm -v $(docker ps -a -q -f status=exited)
 ```
 
+## Connection by from Socket to TCP  
 ```
 $ sudo cat /etc/systemd/system/docker.service.d/startup_options.conf
 # /etc/systemd/system/docker.service.d/override.conf
@@ -79,6 +84,8 @@ $ sudo systemctl restart docker.service
 $ sudo netstat -lntp | grep dockerd
 tcp6       0      0 :::2376                 :::*                    LISTEN      7530/dockerd
 ```
+
+[How do I enable the remote API for dockerd](https://success.docker.com/article/how-do-i-enable-the-remote-api-for-dockerd)  
 
 
 # Portainer.io   
@@ -392,5 +399,6 @@ $ docker-compose up -d
 - 1
 - 2
 - 3
+
 
 
