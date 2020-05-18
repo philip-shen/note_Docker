@@ -85,6 +85,8 @@ $ sudo netstat -lntp | grep dockerd
 tcp6       0      0 :::2376                 :::*                    LISTEN      7530/dockerd
 ```
 
+![alt tag](https://i.imgur.com/jhdkWcN.png)  
+
 [How do I enable the remote API for dockerd](https://success.docker.com/article/how-do-i-enable-the-remote-api-for-dockerd)  
 
 
