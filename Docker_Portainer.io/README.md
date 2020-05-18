@@ -84,7 +84,10 @@ $ sudo systemctl restart docker.service
 $ sudo netstat -lntp | grep dockerd
 tcp6       0      0 :::2376                 :::*                    LISTEN      7530/dockerd
 ```
+*Correct*
+![alt tag](https://i.imgur.com/WvAJOsa.png)  
 
+*Wrong*
 ![alt tag](https://i.imgur.com/jhdkWcN.png)  
 
 [How do I enable the remote API for dockerd](https://success.docker.com/article/how-do-i-enable-the-remote-api-for-dockerd)  
