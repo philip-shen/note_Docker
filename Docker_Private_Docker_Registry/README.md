@@ -54,13 +54,54 @@ Take note of Private Docker Registry
 
 ## Setup Procedures  
 ### 1. SANの設定（OpenSSL） 
+```
+$ ./make_certs.sh
+
+$ ./add_san.sh
+
+$ sudo diff /etc/ssl/openssl.cnf /etc/ssl/openssl.cnf.org
+251,255d250
+< subjectAltName=@alt_names
+< [alt_names]
+< DNS.1 = hyperv-ubuntu18.local
+< IP.1 = 192.168.1.5
+
+```
+![alt tag](https://i.imgur.com/pw8UgFt.png)  
+
+![alt tag](https://i.imgur.com/dJ73eOG.png)  
 
 ### 2. 自己署名証明書の作成
 
 #### 1. 証明書、鍵ファイルの作成 : TLS通信のサーバ側の作業  
+```
+$ openssl req -newkey rsa:4096 -nodes -keyout certs/hyperv-ubuntu18.local.key -x509 -days 365 -out certs/hyperv-ubuntu18.local.crt
+
+```
+
+```
+$ ls -l certs/
+
+$ openssl x509 -text -noout -in certs/hyperv-ubuntu18.local.crt
+```
+![alt tag](https://i.imgur.com/5rQdFOV.png)  
 
 #### 2. 証明書の配置、更新 : TLS通信のクライアント側の作業  
+```
+$ sudo cp -p certs/hyperv-ubuntu18.local.crt /usr/share/ca-certificates/hyperv-ubuntu18.local.crt
+
+$ sudo cp -p /etc/ca-certificates.conf /etc/ca-certificates.conf.org
+
+$ sudo vi /etc/ca-certificates.conf
+
+$ sudo diff /etc/ca-certificates.conf /etc/ca-certificates.conf.org 
+```
+![alt tag](https://i.imgur.com/uqJxxr3.png)  
+
 #### 3. dockerエンジン再起動  
+```
+$ sudo systemctl restart docker 
+```
 
 ### 3. Basic認証設定
 #### 1. htpasswd（を含むパッケージ）インストール 
