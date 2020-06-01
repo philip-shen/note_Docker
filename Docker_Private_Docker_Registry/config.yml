@@ -1,0 +1,29 @@
+version: 0.1
+
+log:
+  level: debug
+  formatter: text
+
+storage:
+  filesystem:
+    rootdirectory: /var/lib/registry
+
+auth:
+  htpasswd:
+    realm: basic-realm
+    path: /auth/htpasswd
+
+http:
+  addr: 0.0.0.0:443
+  host: https://hyperv-ubuntu18.local
+  secret: mysecretstring
+  tls:
+    certificate: /certs/hyperv-ubuntu18.local.crt
+    key: /certs/hyperv-ubuntu18.local.key
+
+#proxy:
+#  remoteurl: https://registry-1.docker.io
+#  username: username
+#  password: password
+
+# end of file
