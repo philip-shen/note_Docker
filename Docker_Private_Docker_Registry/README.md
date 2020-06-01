@@ -240,7 +240,7 @@ http:
 
 # end of file
 ```
-![alt tag](https://i.imgur.com/trNZkkq.png)  
+![alt tag](https://i.imgur.com/pfbvyHs.png)  
 
 ```
 #!/bin/bash
@@ -357,7 +357,22 @@ Getting Private key
 
 # Push Docker Image to Private Docker Registry Server  
 [Day7：建立 private 的 Docker Registry 2017-12-10](https://ithelp.ithome.com.tw/articles/10191213)  
-[]()  
+```
+$ sudo docker tag hello-world hyperv-ubuntu18.local:8443/hello-world
+```
+![alt tag](https://i.imgur.com/guQrRoq.png)  
+
+```
+$ ./run_registry.sh 
+
+$ sudo docker logout hyperv-ubuntu18.local:8443
+
+$ sudo docker login hyperv-ubuntu18.local:8443
+
+$ sudo docker push hyperv-ubuntu18.local:8443/hello-world
+```
+![alt tag](https://i.imgur.com/Ep0OQm5.png)  
+
 
 # Pull Docker Image from Private Docker Registry Server at Another Site   
 [Day7：建立 private 的 Docker Registry 2017-12-10](https://ithelp.ithome.com.tw/articles/10191213)  
@@ -386,6 +401,21 @@ docker logout [サーバ名]
 # Query Docker Registry by Command Line Interface(CLI)  
 [Day8：查詢 Docker Registry 的資訊 2017-12-11](https://ithelp.ithome.com.tw/articles/10191285)  
 []()  
+
+```
+https://hyperv-ubuntu18.local:8443/v2/_catalog
+```
+![alt tag](https://i.imgur.com/7HW1Tvx.png)  
+
+![alt tag](https://i.imgur.com/1NnkLDt.png)  
+
+```
+https://hyperv-ubuntu18.local:8443/v2/hello-world/tags/list
+```
+```
+https://hyperv-ubuntu18.local:8443/v2/hello-world/manifests/lastest
+```
+![alt tag](https://i.imgur.com/wPKBKI4.png)  
 
 # Query Docker Registry by Web GUI   
 [Day8：查詢 Docker Registry 的資訊 2017-12-11](https://ithelp.ithome.com.tw/articles/10191285)  
