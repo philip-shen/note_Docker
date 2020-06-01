@@ -8,8 +8,8 @@ Table of Contents
       * [Setup Procedures](#setup-procedures)
          * [1. SANの設定（OpenSSL）](#1-sanの設定openssl)
          * [2. 自己署名証明書の作成](#2-自己署名証明書の作成)
-            * [1. 証明書、鍵ファイルの作成 : TLS通信のサーバ側の作業](#1-証明書鍵ファイルの作成--tls通信のサーバ側の作業)
-            * [2. 証明書の配置、更新 : TLS通信のクライアント側の作業](#2-証明書の配置更新--tls通信のクライアント側の作業)
+            * [1. 証明書、鍵ファイルの作成 : TLS通信のサーバ (Server)側の作業](#1-証明書鍵ファイルの作成--tls通信のサーバ-server側の作業)
+            * [2. 証明書の配置、更新 : TLS通信のクライアント (Client)側の作業](#2-証明書の配置更新--tls通信のクライアント-client側の作業)
             * [3. dockerエンジン再起動](#3-dockerエンジン再起動)
          * [3. Basic認証設定](#3-basic認証設定)
             * [1. htpasswd（を含むパッケージ）インストール](#1-htpasswdを含むパッケージインストール)
@@ -33,7 +33,6 @@ Table of Contents
 
 Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc)
 
-
 # Purpose
 Take note of Private Docker Registry  
 
@@ -55,9 +54,9 @@ Take note of Private Docker Registry
 ## Setup Procedures  
 ### 1. SANの設定（OpenSSL） 
 ```
-$ ./make_certs.sh
-
 $ ./add_san.sh
+
+$ ./make_certs.sh
 
 $ sudo diff /etc/ssl/openssl.cnf /etc/ssl/openssl.cnf.org
 251,255d250
@@ -65,7 +64,6 @@ $ sudo diff /etc/ssl/openssl.cnf /etc/ssl/openssl.cnf.org
 < [alt_names]
 < DNS.1 = hyperv-ubuntu18.local
 < IP.1 = 192.168.1.5
-
 ```
 ![alt tag](https://i.imgur.com/pw8UgFt.png)  
 
@@ -73,10 +71,22 @@ $ sudo diff /etc/ssl/openssl.cnf /etc/ssl/openssl.cnf.org
 
 ### 2. 自己署名証明書の作成
 
-#### 1. 証明書、鍵ファイルの作成 : TLS通信のサーバ側の作業  
+#### 1. 証明書、鍵ファイルの作成 : TLS通信のサーバ (Server)側の作業  
 ```
-$ openssl req -newkey rsa:4096 -nodes -keyout certs/hyperv-ubuntu18.local.key -x509 -days 365 -out certs/hyperv-ubuntu18.local.crt
-
+$ openssl req -newkey rsa:4096 -nodes -keyout certs/hyperv-ubuntu18.local.key \
+-x509 -days 365 -out certs/hyperv-ubuntu18.local.crt
+-----
+Country Name (2 letter code) [AU]: （未入力）
+State or Province Name (full name) [Some-State]:（未入力）
+Locality Name (eg, city) []:（未入力）
+Organization Name (eg, company) [Internet Widgits Pty Ltd]:（未入力）
+Organizational Unit Name (eg, section) []:（未入力）
+Common Name (e.g. server FQDN or YOUR name) []:<myregistry>（Docker Resistryがあるノードのドメインを入力）
+Email Address []:（未入力）
+Please enter the following 'extra' attributes
+to be sent with your certificate request
+A challenge password []:（未入力）
+An optional company name []:（未入力）
 ```
 
 ```
@@ -86,7 +96,14 @@ $ openssl x509 -text -noout -in certs/hyperv-ubuntu18.local.crt
 ```
 ![alt tag](https://i.imgur.com/5rQdFOV.png)  
 
-#### 2. 証明書の配置、更新 : TLS通信のクライアント側の作業  
+#### 2. 証明書の配置、更新 : TLS通信のクライアント (Client)側の作業  
+```
+TLS通信のクライアント側の作業として、証明書を所定の場所（OSごとで違う）に配置し、
+証明書を更新するコマンド（これもOSごとで違う）を実行する。
+
+以下は今回のubuntu 18.04の場合。
+```
+
 ```
 $ sudo cp -p certs/hyperv-ubuntu18.local.crt /usr/share/ca-certificates/hyperv-ubuntu18.local.crt
 
@@ -103,19 +120,157 @@ $ sudo diff /etc/ca-certificates.conf /etc/ca-certificates.conf.org
 $ sudo systemctl restart docker 
 ```
 
-### 3. Basic認証設定
-#### 1. htpasswd（を含むパッケージ）インストール 
-#### 2. パスワードファイル作成 
+### 3. Basic認証設定  
+#### 1. htpasswd（を含むパッケージ）インストール   
+```
+$ sudo apt install -y apache2-utils
+$ sudo dpkg -l apache2-utils
+```
+![alt tag](https://i.imgur.com/NncuncR.png)  
 
-### 4. registry起動 
+#### 2. パスワードファイル作成  
+* -nで標準出力に出力
+* -Bでbcryptによる暗号化
+* -bでバッチモード（インタラクティブに対するバッチ）
+
+```
+$ mkdir auth
+$ htpasswd -Bbn username password > auth/htpasswd
+
+$ ls -l auth/htpasswd
+$ cat auth/htpasswd
+```
+![alt tag](https://i.imgur.com/4loHBux.png)
+
+### 4. registry起動  
+
 #### 1. 起動用スクリプト準備  
+
+* -d：コンテナをバックグラウンドで起動します。
+* -p：ホスト側のポートとコンテナ側のポートをマッピングします。<host_port>:<container_port>
+* -v：コンテナのボリュームをホストにマウントします。<host_volume>:<container_volume>
+* -e：コンテナに環境変数を設定します。
+
+```
+$ sudo nano run_registry.sh
+
+$ chmod +x run_registry.sh
+
+$ cat run_registry.sh
+#!/bin/bash
+# run_registry.sh
+
+#export PROXY_SERVER=proxy_server
+#export PROXY_PORT=8080
+#export NO_PROXY=127.0.0.1,localhost,192.168.0.1
+
+export REGISTRY_PORT=8443
+
+sudo docker run -d \
+  -e REGISTRY_AUTH=htpasswd \
+  -e REGISTRY_AUTH_HTPASSWD_REALM="Registry Realm" \
+  -e REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd \
+  -e REGISTRY_HTTP_ADDR=0.0.0.0:443 \
+  -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/hyperv-ubuntu18.local.crt \
+  -e REGISTRY_HTTP_TLS_KEY=/certs/hyperv-ubuntu18.local.key \
+  -p ${REGISTRY_PORT}:443 \
+  -v $(pwd)/certs:/certs \
+  -v $(pwd)/auth:/auth \
+  --restart=always \
+  --name registry \
+  registry:2.7
+
+#  -e HTTP_PROXY=http://${PROXY_SERVER}:${PROXY_PORT} \
+#  -e HTTPS_PROXY=http://${PROXY_SERVER}:${PROXY_PORT} \
+#  -e NO_PROXY=${NO_PROXY} \
+```
+
 #### 2. registryコンテナの起動  
+```
+$ ./run_registry.sh 
+```
+![alt tag](https://i.imgur.com/rwrTso4.png)  
+
+```
+$ sudo docker ps -a
+
+CONTAINER ID        IMAGE                     COMMAND                  CREATED              STATUS                          PORTS                                            NAMES
+f282c5c3a414        registry:2.7              "/entrypoint.sh /etc…"   About a minute ago   Up About a minute               5000/tcp, 0.0.0.0:8443->443/tcp                  registry
+```
+![alt tag](https://i.imgur.com/3WyM3q0.png)  
+
+```
+$ sudo docker login hyperv-ubuntu18.local:8443
+```
+![alt tag](https://i.imgur.com/MUvDNC3.png)  
 
 ### 5. 設定ファイルについて
+[設定リファレンス](http://docs.docker.jp/registry/configuration.html)
+> 設定リファレンス によると、既に環境変数で設定変更するのは推奨されない手法となっているようだ。 
 
 ```
+$ cat config.yml
+version: 0.1
+
+log:
+  level: debug
+  formatter: text
+
+storage:
+  filesystem:
+    rootdirectory: /var/lib/registry
+
+auth:
+  htpasswd:
+    realm: basic-realm
+    path: /auth/htpasswd
+
+http:
+  addr: 0.0.0.0:443
+  host: https://hyperv-ubuntu18.local
+  secret: mysecretstring
+  tls:
+    certificate: /certs/hyperv-ubuntu18.local.crt
+    key: /certs/hyperv-ubuntu18.local.key
+
+#proxy:
+#  remoteurl: https://registry-1.docker.io
+#  username: username
+#  password: password
+
+# end of file
+```
+![alt tag](https://i.imgur.com/trNZkkq.png)  
 
 ```
+#!/bin/bash
+# run_registry2.sh
+
+export REGISTRY_PORT=8443
+
+sudo docker run -d \
+  -v $(pwd)/config.yml:/etc/docker/registry/config.yml \
+  -p ${REGISTRY_PORT}:443 \
+  -v $(pwd)/certs:/certs \
+  -v $(pwd)/auth:/auth \
+  --restart=always \
+  --name registry \
+  registry:2.7
+```
+![alt tag](https://i.imgur.com/4iNfXkM.png)  
+
+> 起動スクリプトではホスト側のポート8443を指定していたので、レジストリへのログインのときもこの8443を指定する。
+
+```
+sudo docker login hyperv-ubuntu18.local:8443
+Authenticating with existing credentials...
+WARNING! Your password will be stored unencrypted in /home/test/.docker/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+Login Succeeded
+```
+![alt tag](https://i.imgur.com/puelLJE.png)
 
 
 [プライベートDocker Registryの構築方法 Dec 03, 2019](https://qiita.com/user_h/items/302b71838aae7085b4e4)  
@@ -294,4 +449,6 @@ konradkleine/docker-registry-frontend
 - 1
 - 2
 - 3
+
+
 
