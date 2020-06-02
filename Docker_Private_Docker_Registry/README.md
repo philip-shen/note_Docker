@@ -22,6 +22,12 @@ Table of Contents
    * [Pull Docker Image from Private Docker Registry Server at Another Site](#pull-docker-image-from-private-docker-registry-server-at-another-site)
    * [Query Docker Registry by Command Line Interface(CLI)](#query-docker-registry-by-command-line-interfacecli)
    * [Query Docker Registry by Web GUI](#query-docker-registry-by-web-gui)
+      * [hyper/docker-registry-web](#hyperdocker-registry-web)
+      * [klausmeyer/docker-registry-browser](#klausmeyerdocker-registry-browser)
+      * [jc21/registry-ui](#jc21registry-ui)
+      * [joxit/docker-registry-ui](#joxitdocker-registry-ui)
+      * [parabuzzle/craneoperator](#parabuzzlecraneoperator)
+      * [konradkleine/docker-registry-frontend](#konradkleinedocker-registry-frontend)
    * [Troubleshooting](#troubleshooting)
    * [Reference](#reference)
    * [h1 size](#h1-size)
@@ -29,7 +35,6 @@ Table of Contents
          * [h3 size](#h3-size)
             * [h4 size](#h4-size)
                * [h5 size](#h5-size)
-   * [Table of Contents](#table-of-contents-1)
 
 Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc)
 
@@ -421,23 +426,107 @@ https://hyperv-ubuntu18.local:8443/v2/hello-world/manifests/lastest
 [Day8：查詢 Docker Registry 的資訊 2017-12-11](https://ithelp.ithome.com.tw/articles/10191285)  
 使用 hyper/docker-registry-web 所提供的 Docker Web UI 工具來顯示 Docker Registry 放了哪些Docker Image  
 
+```
+$ docker run -d -p 8080:8080 --name registry-web --link registry -e REGISTRY_URL=https://hyperv-ubuntu18.local:8443/v2 hyper/docker-registry-web
+```
+
+```
+docker: failed to register layer: Error processing tar file(exit status 1): write /root/.grails/wrapper/2.5.4/grails-2.5.4/lib/commons-codec/commons-codec/jars/commons-codec-1.6-sources.jar: no space left on device.
+```
+
+## hyper/docker-registry-web  
 [Docker プライベートレジストリのWebUI調査 (1)](https://qiita.com/rururu_kenken/items/4ab319877dcdd750b2ab)  
-hyper/docker-registry-web
 
+[WebUIから Docker Registry 2.0上のimageをDELETE updated at 2016-02-04](https://qiita.com/tukiyo3/items/0d3814b78f555e78d0f5)  
+```
+docker-compose.yml
+
+ web:
+   image: hyper/docker-registry-web
+   ports:
+     - "8080:8080"
+   links:
+     - registry
+   environment:
+    REGISTRY_HOST: registry
+
+ registry:
+   image: registry:2
+   ports:
+     - 5000:5000
+   environment:
+     REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY: /registry
++    REGISTRY_STORAGE_DELETE_ENABLED: 'True'
+   volumes:
+     - ./registry:/registry
+```
+
+```
+/etc/docker/registry/config.yml
+
+ version: 0.1
+ log:
+   fields:
+     service: registry
+ storage:
+     cache:
+         blobdescriptor: inmemory
+     filesystem:
+         rootdirectory: /var/lib/registry
++    delete:
++      enabled: true
+ http:
+     addr: :5000
+     headers:
+         X-Content-Type-Options: [nosniff]
+ health:
+   storagedriver:
+     enabled: true
+     interval: 10s
+     threshold: 3
+```
+
+```
+docker-compose.yml
+
+ web:
+   image: hyper/docker-registry-web
+   ports:
+     - "8080:8080"
+   links:
+     - registry
+   environment:
+    REGISTRY_HOST: registry
+
+ registry:
+   image: registry:2
+   ports:
+     - 5000:5000
+   environment:
+     REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY: /registry
+   volumes:
+     - ./registry:/registry
++    - ./config.yml:/etc/docker/registry/config.yml
+```
+
+```
+docker-compose up
+```
+
+## klausmeyer/docker-registry-browser  
 [Docker プライベートレジストリのWebUI調査 (2)](https://qiita.com/rururu_kenken/items/ff9b5b755d7c5735065e)  
-klausmeyer/docker-registry-browser  
 
+## jc21/registry-ui  
 [Docker プライベートレジストリのWebUI調査 (3)](https://qiita.com/rururu_kenken/items/996076daaea11e657995)  
-jc21/registry-ui  
 
+## joxit/docker-registry-ui  
 [Docker プライベートレジストリのWebUI調査 (4) updated at 2020-03-29](https://qiita.com/rururu_kenken/items/fb7e6758a3fa60a83314)  
-joxit/docker-registry-ui
 
-[Docker プライベートレジストリのWebUI調査 (5) updated at 2020-03-29](https://qiita.com/rururu_kenken/items/b5b6b754774d76b08c53)
-parabuzzle/craneoperator  
+## parabuzzle/craneoperator  
+[Docker プライベートレジストリのWebUI調査 (5) updated at 2020-03-29](https://qiita.com/rururu_kenken/items/b5b6b754774d76b08c53)  
 
+## konradkleine/docker-registry-frontend  
 [Docker プライベートレジストリのWebUI調査 (6) updated at 2020-03-29](https://qiita.com/rururu_kenken/items/530ef38fe0342d6e2bfa)  
-konradkleine/docker-registry-frontend
 
 
 []()  
@@ -479,6 +568,4 @@ konradkleine/docker-registry-frontend
 - 1
 - 2
 - 3
-
-
 
