@@ -22,6 +22,8 @@ Table of Contents
    * [Pull Docker Image from Private Docker Registry Server at Another Site](#pull-docker-image-from-private-docker-registry-server-at-another-site)
    * [Query Docker Registry by Command Line Interface(CLI)](#query-docker-registry-by-command-line-interfacecli)
    * [Query Docker Registry by Web GUI](#query-docker-registry-by-web-gui)
+      * [nginx-auth-enabled](#nginx-auth-enabled)
+      * [Connecting to docker registry with basic authentication and self-signed certificate](#connecting-to-docker-registry-with-basic-authentication-and-self-signed-certificate)
       * [hyper/docker-registry-web](#hyperdocker-registry-web)
       * [klausmeyer/docker-registry-browser](#klausmeyerdocker-registry-browser)
       * [jc21/registry-ui](#jc21registry-ui)
@@ -433,6 +435,31 @@ $ docker run -d -p 8080:8080 --name registry-web --link registry -e REGISTRY_URL
 ```
 docker: failed to register layer: Error processing tar file(exit status 1): write /root/.grails/wrapper/2.5.4/grails-2.5.4/lib/commons-codec/commons-codec/jars/commons-codec-1.6-sources.jar: no space left on device.
 ```
+## nginx-auth-enabled  
+[docker-registry-web/examples/nginx-auth-enabled/](https://github.com/mkuchin/docker-registry-web/tree/master/examples/nginx-auth-enabled)  
+```
+ curl -Ls https://github.com/mkuchin/docker-registry-web/releases/download/v0.1.2/examples.tar.gz | tar -xzv
+ cd examples/nginx-auth-enabled/
+```
+
+```
+ ./generate-keys.sh
+```
+
+```
+ docker-compose up
+```
+
+## Connecting to docker registry with basic authentication and self-signed certificate  
+[docker-registry-web](https://hub.docker.com/r/hyper/docker-registry-web/)  
+```
+docker run -it -p 8080:8080 --name registry-web --link registry-srv \
+           -e REGISTRY_URL=https://registry-srv:5000/v2 \
+           -e REGISTRY_TRUST_ANY_SSL=true \
+           -e REGISTRY_BASIC_AUTH="$2y$05$bHj2S9h34/OcHR/AIC3KC.4EQoxGHsAnmllizW8hEeasrUW/bf3Cu" \
+           -e REGISTRY_NAME=localhost:5000 hyper/docker-registry-web
+```
+
 
 ## hyper/docker-registry-web  
 [Docker プライベートレジストリのWebUI調査 (1)](https://qiita.com/rururu_kenken/items/4ab319877dcdd750b2ab)  
@@ -568,4 +595,5 @@ docker-compose up
 - 1
 - 2
 - 3
+
 
