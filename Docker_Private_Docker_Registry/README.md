@@ -29,6 +29,12 @@ Table of Contents
       * [jc21/registry-ui](#jc21registry-ui)
       * [joxit/docker-registry-ui](#joxitdocker-registry-ui)
       * [parabuzzle/craneoperator](#parabuzzlecraneoperator)
+         * [手順3. BASIC認証によるアクセス制限](#手順3-basic認証によるアクセス制限)
+            * [サーバー側の作業](#サーバー側の作業)
+            * [クライアント側の作業](#クライアント側の作業)
+         * [手順4. CraneOperatorによるWeb UI](#手順4-craneoperatorによるweb-ui)
+            * [サーバー側の作業](#サーバー側の作業-1)
+            * [クライアント側の作業](#クライアント側の作業-1)
       * [konradkleine/docker-registry-frontend](#konradkleinedocker-registry-frontend)
    * [Troubleshooting](#troubleshooting)
    * [Reference](#reference)
@@ -552,6 +558,116 @@ docker-compose up
 ## parabuzzle/craneoperator  
 [Docker プライベートレジストリのWebUI調査 (5) updated at 2020-03-29](https://qiita.com/rururu_kenken/items/b5b6b754774d76b08c53)  
 
+[Docker Registryの簡易セットアップ updated at 2019-01-15](https://qiita.com/shakiyam/items/8f23ae73a0acd6ae493e#tldr-%E8%A6%81%E7%B4%84)  
+### 手順3. BASIC認証によるアクセス制限  
+#### サーバー側の作業  
+```
+mkdir -p auth
+docker run \
+  --rm \
+  --entrypoint htpasswd \
+  registry:2 \
+  -nb -B username password > auth/htpasswd
+```
+
+```
+docker container run -d \
+  -p 443:443 \
+  --restart=always \
+  --name registry \
+  -v $(pwd)/auth:/auth \
+  -v $(pwd)/certs:/certs \
+  -v REGISTRY_AUTH=htpasswd \
+  -v REGISTRY_AUTH_HTPASSWD_REALM="Registry Realm" \
+  -v REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd \
+  -e REGISTRY_HTTP_ADDR=0.0.0.0:443 \
+  -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/ca.crt \
+  -e REGISTRY_HTTP_TLS_KEY=/certs/ca.key \
+  registry:2
+```
+
+#### クライアント側の作業  
+```
+echo password | docker login registry.example.com --password-stdin -u username
+```
+
+```
+docker push registry.example.com/hello-world:latest
+curl https://registry.example.com/v2/_catalog
+```
+
+### 手順4. CraneOperatorによるWeb UI  
+#### サーバー側の作業  
+
+```
+Docker RegistryとCraneOperatorの2つのコンテナを起動しますので、Dokcer Composeを使用します。
+
+下記のようなdocker-compose.ymlを用意します。
+この例では、Docker RegistryとCraneOperatorの設定でイメージの削除を有効化しています。
+
+また、レジストリのデータを格納するdocker volumeにregistryという名前を付けています。
+
+なお、REGISTRY_HOSTはレジストリのコンテナを指していますので、
+registry.example.comではなくregistryを指定しています。
+```
+
+```
+version: '3'
+services:
+  registry:
+    image: registry:2
+    volumes:
+      - ./auth:/auth
+      - ./certs:/certs
+      - registry:/var/lib/registry
+    ports:
+      - "443:443"
+    environment:
+      - REGISTRY_AUTH=htpasswd
+      - REGISTRY_AUTH_HTPASSWD_REALM="Registry Realm"
+      - REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd
+      - REGISTRY_HTTP_ADDR=0.0.0.0:443
+      - REGISTRY_HTTP_TLS_CERTIFICATE=/certs/ca.crt
+      - REGISTRY_HTTP_TLS_KEY=/certs/ca.key
+      - REGISTRY_STORAGE_DELETE_ENABLED=true
+    restart: always
+  web:
+    depends_on:
+      - registry
+    image: parabuzzle/craneoperator:latest
+    ports:
+      - "8000:80"
+    environment:
+      - REGISTRY_HOST=registry
+      - REGISTRY_PORT=443
+      - REGISTRY_PROTOCOL=https
+      - SSL_VERIFY=false
+      - REGISTRY_PUBLIC_URL=registry.example.com
+      - REGISTRY_USERNAME=username
+      - REGISTRY_PASSWORD=password
+      - USERNAME=username
+      - PASSWORD=password
+      - REGISTRY_ALLOW_DELETE=true
+    restart: always
+volumes:
+  registry:
+```
+
+```
+docker-compose up -d
+```
+
+#### クライアント側の作業  
+
+```
+docker push registry.example.com/hello-world:latest
+```
+
+[shakiyam /registry](https://github.com/shakiyam/registry)  
+>  Simple setup scripts for private Docker registry with self-signed certificate, basic authentication, Web UI   
+
+
+
 ## konradkleine/docker-registry-frontend  
 [Docker プライベートレジストリのWebUI調査 (6) updated at 2020-03-29](https://qiita.com/rururu_kenken/items/530ef38fe0342d6e2bfa)  
 
@@ -595,5 +711,4 @@ docker-compose up
 - 1
 - 2
 - 3
-
 
