@@ -537,8 +537,8 @@ sudo docker run hello-world
 
 You can install the Docker Compose from the official Ubuntu repositories, but it is not the latest version. So you can install the latest version of Docker Compose from the Docker’s GitHub repository.
 ```
-$ curl -L https://github.com/docker/compose/releases/download/1.24.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
-$ chmod +x /usr/local/bin/docker-compose
+$ sudo curl -L https://github.com/docker/compose/releases/download/1.24.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+$ sudo chmod +x /usr/local/bin/docker-compose
 $ sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 ```
 ```
