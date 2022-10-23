@@ -29,7 +29,7 @@ Table of Contents
    * [How do I install Docker on Ubuntu 16.04 LTS?](#how-do-i-install-docker-on-ubuntu-1604-lts)
       * [(A) Official Ubuntu Repositories](#a-official-ubuntu-repositories)
       * [(B) Official Docker Way](#b-official-docker-way)
-   * [How to Install and Use Docker Compose on Ubuntu 16.04 /18.04](#how-to-install-and-use-docker-compose-on-ubuntu-1604-1804)
+   * [How to Install and Use Docker Compose on Ubuntu](#how-to-install-and-use-docker-compose-on-ubuntu)
       * [Installing Docker Compose from Docker’s GitHub Repository](#installing-docker-compose-from-dockers-github-repository)
    * [Dockerでpython3 and iperf3環境を準備する](#dockerでpython3-and-iperf3環境を準備する)
       * [ファイル構成](#ファイル構成)
@@ -572,21 +572,27 @@ sudo docker run hello-world
 
 如果要馬上生效，請重新登入。 
 
-# How to Install and Use Docker Compose on Ubuntu 16.04 /18.04  
+
+# How to Install and Use Docker Compose on Ubuntu  
 [How to Install and Use Docker Compose on Ubuntu 16.04 /18.04 Apr 9, 2019](https://www.osetc.com/en/how-to-install-and-use-docker-compose-on-ubuntu-16-04-18-04.html)  
 
 ## Installing Docker Compose from Docker’s GitHub Repository  
 
 You can install the Docker Compose from the official Ubuntu repositories, but it is not the latest version. So you can install the latest version of Docker Compose from the Docker’s GitHub repository.
+
+~~$ sudo curl -L https://github.com/docker/compose/releases/download/1.24.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose~~
+
+
 ```
-$ sudo curl -L https://github.com/docker/compose/releases/download/1.24.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+$ sudo curl -L https://github.com/docker/compose/releases/download/v2.12.2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
 $ sudo chmod +x /usr/local/bin/docker-compose
 $ sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 ```
 ```
 $ docker-compose --version
-docker-compose version 1.24.0, build 0aa59064
+Docker Compose version v2.12.2
 ```
+
 
 # Dockerでpython3 and iperf3環境を準備する  
 [dockerで簡易にpython3の環境を作ってみる 2018-10-17](https://qiita.com/reflet/items/4b3f91661a54ec70a7dc)  
