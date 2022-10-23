@@ -1,6 +1,7 @@
 Table of Contents
 =================
 
+   * [Table of Contents](#table-of-contents)
    * [note_Docker](#note_docker)
    * [LinuxにDockerをインストールする](#linuxにdockerをインストールする)
       * [Prerequisites (環境)](#prerequisites-環境)
@@ -43,6 +44,47 @@ Table of Contents
       * [python3コンテナの準備](#python3コンテナの準備)
       * [python3コンテナの起動](#python3コンテナの起動)
       * [軽い動作確認](#軽い動作確認)
+   * [Docker Compose version3](#docker-compose-version3)
+      * [build](#build)
+      * [cap_add, cap_drop](#cap_add-cap_drop)
+      * [command](#command)
+      * [configs](#configs)
+      * [cgroup_parent](#cgroup_parent)
+      * [container_name](#container_name)
+      * [credential_spec](#credential_spec)
+      * [deploy](#deploy)
+      * [devices](#devices)
+      * [depends_on](#depends_on)
+      * [dns](#dns)
+      * [dns_search](#dns_search)
+      * [tmpfs](#tmpfs)
+      * [entrypoint](#entrypoint)
+      * [env_file](#env_file)
+      * [environment](#environment)
+      * [expose](#expose)
+      * [external_links](#external_links)
+      * [extra_hosts](#extra_hosts)
+      * [healthcheck](#healthcheck)
+      * [isolation](#isolation)
+      * [labels](#labels)
+      * [links](#links)
+      * [logging](#logging)
+      * [syslog](#syslog)
+      * [json-file](#json-file)
+      * [network_mode](#network_mode)
+      * [networks](#networks)
+      * [ALIASES](#aliases)
+      * [IPV4_ADDRESS, IPV6_ADDRESS](#ipv4_address-ipv6_address)
+      * [pid](#pid)
+      * [ports](#ports)
+            * [SHORT SYNTAX](#short-syntax)
+            * [LONG SYNTAX](#long-syntax)
+      * [secrets](#secrets)
+         * [SHORT SYNTAX](#short-syntax-1)
+         * [LONG SYNTAX](#long-syntax-1)
+      * [credential_spec](#credential_spec-1)
+      * [deploy](#deploy-1)
+         * [ENDPOINT_MODE](#endpoint_mode)
    * [Troubleshooting](#troubleshooting-1)
    * [Reference](#reference)
    * [h1 size](#h1-size)
@@ -833,6 +875,596 @@ pip 9.0.1 from /usr/local/lib/python3.6/site-packages (python 3.6)
 ```
 
 
+# Docker Compose version3  
+[Compose file version3のリファレンス updated at 2020-09-26](https://qiita.com/goforbroke/items/b4a071af71f457960e59)
+[Compose file version3のリファレンス 2021/09/25](https://zenn.dev/goforbroke/articles/a041488b6e548c886535)
+
+## build
+```
+build: ./dir
+
+build:
+  context: ./dir
+  dockerfile: Dockerfile-alternate
+  args:
+    buildno: 1
+```
+
+## cap_add, cap_drop 
+```
+cap_add:
+  - ALL
+
+cap_drop:
+  - NET_ADMIN
+  - SYS_ADMIN
+```
+
+## command 
+```
+command: bundle exec thin -p 3000
+```
+```
+command: ["bundle", "exec", "thin", "-p", "3000"]
+```
+
+## configs
+```
+version: "3.3"
+services:
+  redis:
+    image: redis:latest
+    deploy:
+      replicas: 1
+    configs:
+      - my_config
+      - my_other_config
+configs:
+  my_config:
+    file: ./my_config.txt
+  my_other_config:
+    external: true
+```
+
+## cgroup_parent
+コンテナが属する container_group を指定する．
+swarm　modeでは無視される．
+```
+cgroup_parent: m-executor-abcd
+```
+
+## container_name
+```
+container_name: my-web-container
+```
+
+## credential_spec
+Windows専用．
+```
+redential_spec:
+  file: c:/WINDOWS/my-credential-spec.txt
+
+credential_spec:
+  registry: HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Virtualization\Containers\CredentialSpecs
+```
+
+## deploy
+```
+version: '3'
+services:
+  redis:
+    image: redis:alpine
+    deploy:
+      replicas: 6
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+```
+
+## devices
+```
+devices:
+  - "/dev/ttyUSB0:/dev/ttyUSB0"
+```
+
+## depends_on
+コンテナの依存関係を定義する．
+次の例では， web は db と redis に依存する．
+
+docker stack deploy を使ったswarm modeでは無視される．
+```
+version: '3'
+services:
+  web:
+    build: .
+    depends_on:
+      - db
+      - redis
+  redis:
+    image: redis
+  db:
+    image: postgres
+```
+```
+dbが起動し，且つredisが起動 -> webが次に起動
+```
+
+##  dns
+```
+dns: 8.8.8.8
+dns:
+  - 8.8.8.8
+  - 9.9.9.9
+```
+
+## dns_search
+```
+dns_search: example.com
+dns_search:
+  - dc1.example.com
+  - dc2.example.com
+```
+
+## tmpfs
+```
+tmpfs: /run
+tmpfs:
+  - /run
+  - /tmp
+```
+
+## entrypoint
+コンテナが実行するファイルを設定する。
+デフォルトのエントリポイントを上書きする。
+entrypoint を指定すると、既存の ENTRYPOINT CMD は実行しない。
+```
+entrypoint:
+    - php
+    - -d
+    - zend_extension=/usr/local/lib/php/extensions/no-debug-non-zts-20100525/xdebug.so
+    - -d
+    - memory_limit=-1
+    - vendor/bin/phpunit
+```
+
+## env_file
+コンテナの環境変数を別ファイルにまとめて指定ができる。
+既存の環境変数があれば env_file の値で上書きする。
+build オプションと合わせて指定すると、build中は enviroment で指定した、環境変数は見えないことに注意。
+build に変数を渡す場合は args オプションで指定する。
+```
+env_file: .env
+
+env_file:
+  - ./common.env
+  - ./apps/web.env
+  - /opt/secrets.env
+```
+
+env_file の中身は VAR=VAL 形式で設定する。
+```
+# Set Rails/Rack environment
+RACK_ENV=development
+```
+
+## environment
+コンテナの環境変数を追加する。
+env_file の違いはdocker-comose.yamlに直接記述すること。
+build オプションと合わせて指定すると、build中は enviroment で指定した、環境変数は見えないことに注意。
+build に変数を渡す場合は args オプションで指定する。
+```
+environment:
+  RACK_ENV: development
+  SHOW: 'true'
+  SESSION_SECRET:
+
+environment:
+  - RACK_ENV=development
+  - SHOW=true
+  - SESSION_SECRET
+```
+
+## expose
+コンテナ内に限定して公開するポートを指定する。
+exposeで公開したポートは linked servicesからのみアクセスが可能。
+
+ホスト向けに公開したい場合は ports オプションを使用すること。
+```
+expose:
+ - "3000"
+ - "8000"
+```
+
+## external_links
+docker-composeのスコープ外にあるコンテナと通信する．
+
+  * docker-compose.yaml のスコープ外
+  * Composeのスコープ外
+
+docker-composeで起動するコンテナ群が，他コンテナに共通サービスを提供している場合に活用できる．
+<container name>:<alias name> で link のように動作する．
+```
+external_links:
+ - redis_1
+ - project_db_1:mysql
+ - project_db_1:postgresql
+```
+
+## extra_hosts 
+```
+xtra_hosts:
+ - "somehost:162.242.195.82"
+ - "otherhost:50.31.209.229"
+```
+
+設定内容は /etc/hosts に反映する．
+```
+162.242.195.82  somehost
+50.31.209.229   otherhost
+```
+
+## healthcheck
+コンテナのサービス死活監視に利用するコマンドを設定する．
+```
+healthcheck:
+  test: ["CMD", "curl", "-f", "http://localhost"]
+  interval: 1m30s
+  timeout: 10s
+  retries: 3
+```
+
+imageで設定されたヘルスチェックを無効にしたい場合は disable:true を設定する．
+```
+healthcheck:
+  disable: true
+```
+
+## isolation
+コンテナの分離技術を指定する．
+
+  * Linux: default
+  * Windows: default, process, hyperv
+
+
+## labels
+```
+labels:
+  com.example.description: "Accounting webapp"
+  com.example.department: "Finance"
+  com.example.label-with-empty-value: ""
+
+labels:
+  - "com.example.description=Accounting webapp"
+  - "com.example.department=Finance"
+  - "com.example.label-with-empty-value"
+```
+
+## links
+```
+web:
+  links:
+   - db
+   - db:database
+   - redis
+```
+
+注記
+
+  * links と networks を両方定義した場合，リンクを有するサービスは通信するために1つ以上のネットワークを共有する必要がある．
+  * docker stack deploy を使ったswarm modeでは無視される．
+
+## logging
+サービスのロギングを設定する．
+```
+logging:
+  driver: syslog
+  options:
+    syslog-address: "tcp://192.168.0.42:123"
+```
+
+コンテナのサービスに対するロギング形式は driver で指定する．
+--log-driver と同じ意味を持つ．
+
+デフォルトはjson-file
+```
+driver: "json-file"
+driver: "syslog"
+driver: "none"
+
+```
+注記
+
+json-file と journaldドライバは，次のログから直接取得する．
+
+    docker-compose up
+    docker-compose logs
+
+他のドライバはログを出力しない
+
+## syslog
+```
+driver: "syslog"
+options:
+  syslog-address: "tcp://192.168.0.42:123"
+```
+
+## json-file
+```
+services:
+  some-service:
+    image: some-service
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+
+```
+
+## network_mode
+```
+network_mode: "bridge"
+network_mode: "host"
+network_mode: "none"
+network_mode: "service:[service name]"
+network_mode: "container:[container name/id]"
+```
+
+## networks
+networks を最上位として，使用するネットワークを列挙する．
+```
+services:
+  some-service:
+    networks:
+     - some-network
+     - other-network
+```
+
+## ALIASES
+```
+services:
+  some-service:
+    networks:
+      some-network:
+        aliases:
+         - alias1
+         - alias3
+      other-network:
+        aliases:
+         - alias2
+```
+
+3つのサービス( web, worker, db )が，2つのネットワーク( new, legacy )を介する例．
+dbサービスはnewネットワークからホスト名db，またはdatabaseで接続できる．
+legacyネットワークからはdbまたは mysql で接続できる．
+```
+version: '2'
+
+services:
+  web:
+    build: ./web
+    networks:
+      - new
+
+  worker:
+    build: ./worker
+    networks:
+      - legacy
+
+  db:
+    image: mysql
+    networks:
+      new:
+        aliases:
+          - database
+      legacy:
+        aliases:
+          - mysql
+
+networks:
+  new:
+  legacy:
+```
+
+## IPV4_ADDRESS, IPV6_ADDRESS
+固定のIPv4アドレス，IPv6アドレスを指定する．
+
+networks セクションの最上位に対応するネットワーク構成には，
+静的アドレスをカバーするサブネット構成を持つ ipam ブロックが必要．
+```
+version: '2.1'
+
+services:
+  app:
+    image: busybox
+    command: ifconfig
+    networks:
+      app_net:
+        ipv4_address: 172.16.238.10
+        ipv6_address: 2001:3984:3989::10
+
+networks:
+  app_net:
+    driver: bridge
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+      -
+        subnet: 172.16.238.0/24
+      -
+        subnet: 2001:3984:3989::/64
+```
+
+## pid
+```
+pid: "host"
+```
+
+## ports
+
+#### SHORT SYNTAX
+```
+ports:
+ - "3000"
+ - "3000-3005"
+ - "8000:8000"
+ - "9090-9091:8080-8081"
+ - "49100:22"
+ - "127.0.0.1:8001:8001"
+ - "127.0.0.1:5000-5010:5000-5010"
+ - "6060:6060/udp"
+```
+
+#### LONG SYNTAX
+short syntaxで表現しきれない追加設定を許可する．
+
+    target : コンテナ内のポート
+    published : 公開されているポート
+    protocol : 公開するポートのプロトコル(TCP/UDP)
+    mode :
+        host : 各ノードにホストのポートを公開する
+        ingress : swarm modeの入力でロードバランスされるポート
+```
+ports:
+  - target: 80
+    published: 8080
+    protocol: tcp
+    mode: host
+```
+注記
+
+long syntaxは3．2以降から利用可能．
+
+## secrets
+
+### SHORT SYNTAX 
+```
+Docker 1．13．1での制限
+```
+
+### LONG SYNTAX
+long syntaxはサービスのタスクコンテナ内で，secretがどのように生成するかを詳細に与える．
+
+  * source : dockerに存在するconfigの名前
+  * target : サービスのタスクコンテナにマウントされるパス付きのファイル名．デフォルトは /<source>
+  * uid , gid : サービスのタスクコンテナ内でマウントしたconfigのUIDまたはGIDを数字で表現する．デフォルトは 0 ．Windowsではサポートしない．
+  * mode : サービスタスクのコンテナ内でマウントするファイルのパーミッション．8進数で表現し，Linuxの権限設定に準ずる．デフォルトは 0444．
+      * Configは一時的なファイルシステムにマウントされるため，書き込みビットを立てても無視される．実行ビットはセットできる．
+
+次の例は my_config を コンテナ内で redis_config として指定する例． 
+```
+version: "3.3"
+services:
+  redis:
+    image: redis:latest
+    deploy:
+      replicas: 1
+    configs:
+      - source: my_config
+        target: /redis_config
+        uid: '103'
+        gid: '103'
+        mode: 0440
+configs:
+  my_config:
+    file: ./my_config.txt
+  my_other_config:
+    external: true
+```
+
+## credential_spec 
+管理サービスアカウントの資格情報の設定。(Windowsのみ)
+credential_spec は file://<filename> または registry://<value-name> で記述する必要がある．
+
+file を使う時，Dockerのデータディレクトリに CredentialSpecs ディレクトリを作って参照するファイルを置く．
+データディレクトリのデフォルトは C:\ProgramData\Docker\ になる．
+
+次の例は C:\ProgramData\Docker\CredentialSpecs\my-credential-spec.json に証明書を置いた例．
+```
+credential_spec:
+  file: my-credential-spec.json
+```
+
+regisitry: を使うと，デーモンのホストのWindowsレジストリから証明書を読む．
+```
+credential_spec:
+  registry: HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Virtualization\Containers\CredentialSpecs
+```
+
+## deploy
+デプロイと動作中のサービスに関連する設定を指定する．
+
+```
+version: '3'
+services:
+  redis:
+    image: redis:alpine
+    deploy:
+      replicas: 6
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+```
+注記
+
+version 3限定
+
+### ENDPOINT_MODE
+swarmに繋がっている外部クライアントに向けてサービスディスカバリ方法を指定する．
+
+  * endpoint_mode: vip
+
+デフォルト値．DockerのサービスをVirtual IPに割り当てる．
+
+  * endpoint_mode: dnsrr
+
+DNSラウンドロビンを使う．
+```
+version: "3.3"
+
+services:
+  wordpress:
+    image: wordpress
+    ports:
+      - 8080:80
+    networks:
+      - overlay
+    deploy:
+      mode: replicated
+      replicas: 2
+      endpoint_mode: vip
+
+  mysql:
+    image: mysql
+    volumes:
+       - db-data:/var/lib/mysql/data
+    networks:
+       - overlay
+    deploy:
+      mode: replicated
+      replicas: 2
+      endpoint_mode: dnsrr
+
+volumes:
+  db-data:
+
+networks:
+  overlay:
+```
+
+endpoint_mode のオプションはswarmモードのCLIコマンド docker service create でも動作する．
+サービスディスカバリとネットワークの設定を更に学びたい場合は，
+[Configure service discovery](https://docs.docker.com/engine/swarm/networking/#configure-service-discovery)
+を参照すること．
+
+注記
+version 3.3限定
+
 
 # Troubleshooting
 
@@ -949,3 +1581,5 @@ sudo usermod -aG docker gtwang
 - 1
 - 2
 - 3
+
+
